@@ -100,3 +100,42 @@ def get_partner_advice(answers: dict) -> str:
     )
 
     return pitch + checklist
+
+
+async def get_partners_in_region(region: str, erp_names: list[str], answers: dict) -> str:
+    """Ищет сертифицированных партнёров по ERP в указанном регионе через web_search."""
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    industry = answers.get("industry", "")
+    systems = " и ".join(erp_names) if erp_names else "ERP"
+
+    prompt = (
+        "Найди сертифицированных партнёров по внедрению " + systems
+        + " в регионе: " + region + ".\n"
+        + "Отрасль клиента: " + industry + ".\n\n"
+        + "Используй web_search для поиска актуальной информации.\n"
+        + "Найди 3-5 конкретных компаний-партнёров с:\n"
+        + "- Названием компании\n"
+        + "- Сайтом\n"
+        + "- Кратким описанием специализации\n"
+        + "- Статусом партнёрства (если найдёшь)\n\n"
+        + "Также укажи официальные инструменты поиска партнёров:\n"
+        + "- SAP Partner Finder: https://www.sap.com/partner/find.html\n"
+        + "- Microsoft Partner: https://partner.microsoft.com/en-us/partnership/find-a-partner\n"
+        + "- Oracle Partner: https://partner.oracle.com/\n\n"
+        + "Формат ответа: Telegram Markdown, кратко и конкретно."
+    )
+
+    response = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=1000,
+        tools=[{"type": "web_search_20250305", "name": "web_search"}],
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    parts = [b.text for b in response.content if hasattr(b, "type") and b.type == "text"]
+    if parts:
+        return "\n".join(parts)
+    return (
+        "По запросу '" + region + "' партнёры не найдены. "
+        + "Используйте SAP Partner Finder: https://www.sap.com/partner/find.html"
+    )

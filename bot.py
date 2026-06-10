@@ -2,12 +2,8 @@
 🧘 ERP Yoga Bot (@SAPyogaBOT)
 Keep Calm and Get Advice
 
-Стек: aiogram 3.x · FSM · Claude API · Resend
+Стек: aiogram 3.x · FSM · Claude API
 Деплой: Railway (Dockerfile в корне)
-
-Запуск:
-    cp .env.example .env   # заполни переменные
-    python bot.py
 """
 from __future__ import annotations
 
@@ -31,8 +27,7 @@ from aiogram.types import (
 from dotenv import load_dotenv
 
 from ai_service import get_ai_recommendation, get_partner_advice
-from data import CONTACT_STEPS, get_top3, get_visible_steps, format_top3_text
-from email_service import send_brief
+from data import get_top3, get_visible_steps, format_top3_text, build_plain_brief
 
 load_dotenv()
 
@@ -48,23 +43,26 @@ ITEMS_PER_PAGE = 8
 # ── FSM ──────────────────────────────────────────────────────────────────────
 
 class Survey(StatesGroup):
-    question = State()
-    contact  = State()
-    confirm  = State()
+    question = State()   # анкета
+    region   = State()   # опциональный вопрос о регионе для поиска партнёров
+    result   = State()   # показан результат, ждём действий
 
 
 # ── Keyboard helpers ──────────────────────────────────────────────────────────
 
-def _opts_kbd(opts: list[str], q_type: str, selected: list[str], page: int = 0, step_idx: int = 0) -> InlineKeyboardMarkup:
-    """callback_data = opt:{step_idx}:{opt_idx} — числовые индексы, кириллица не превышает лимит 64 байта."""
+def _opts_kbd(opts: list[str], q_type: str, selected: list[str],
+              page: int = 0, step_idx: int = 0) -> InlineKeyboardMarkup:
+    """callback_data = opt:{step_idx}:{opt_idx} — числовые индексы, макс. ~10 байт."""
     start, end = page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE
     rows = []
 
     for abs_idx in range(start, min(end, len(opts))):
         opt = opts[abs_idx]
         prefix = "✅ " if opt in selected else ""
-        cb = f"opt:{step_idx}:{abs_idx}"
-        rows.append([InlineKeyboardButton(text=prefix + opt, callback_data=cb)])
+        rows.append([InlineKeyboardButton(
+            text=prefix + opt,
+            callback_data=f"opt:{step_idx}:{abs_idx}",
+        )])
 
     nav = []
     if page > 0:
@@ -80,10 +78,11 @@ def _opts_kbd(opts: list[str], q_type: str, selected: list[str], page: int = 0, 
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
-def _confirm_kbd() -> InlineKeyboardMarkup:
+def _result_kbd() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="📨 Отправить бриф партнёру", callback_data="send_brief")],
-        [InlineKeyboardButton(text="🔄 Пройти заново",           callback_data="restart")],
+        [InlineKeyboardButton(text="📋 Скопировать бриф",          callback_data="copy_brief")],
+        [InlineKeyboardButton(text="🌍 Найти партнёров в регионе", callback_data="find_partners")],
+        [InlineKeyboardButton(text="🔄 Пройти заново",             callback_data="restart")],
     ])
 
 
@@ -103,8 +102,8 @@ BLOCK_LABELS = {
 
 
 def _step_text(step: dict, num: int, total: int, selected: list[str]) -> str:
-    block = BLOCK_LABELS.get(step.get("block", "main"), "")
-    sub   = f"\n_{step['sub']}_" if step.get("sub") else ""
+    block   = BLOCK_LABELS.get(step.get("block", "main"), "")
+    sub     = f"\n_{step['sub']}_" if step.get("sub") else ""
     sel_txt = ""
     if step["type"] == "multi" and selected:
         sel_txt = "\n\n*Выбрано:* " + ", ".join(selected)
@@ -112,13 +111,13 @@ def _step_text(step: dict, num: int, total: int, selected: list[str]) -> str:
 
 
 async def _render_step(message: Message, state: FSMContext, edit: bool = False) -> None:
-    data     = await state.get_data()
-    answers  = data.get("answers", {})
-    visible  = get_visible_steps(answers)
-    idx      = data.get("step", 0)
+    data    = await state.get_data()
+    answers = data.get("answers", {})
+    visible = get_visible_steps(answers)
+    idx     = data.get("step", 0)
 
     if idx >= len(visible):
-        await _start_contacts(message, state, edit)
+        await _show_result(message, state, edit)
         return
 
     step     = visible[idx]
@@ -130,10 +129,8 @@ async def _render_step(message: Message, state: FSMContext, edit: bool = False) 
     kbd  = _opts_kbd(step["opts"], step["type"], selected, page, step_idx=idx)
 
     try:
-        if edit:
-            await message.edit_text(text, reply_markup=kbd)
-        else:
-            await message.answer(text, reply_markup=kbd)
+        if edit: await message.edit_text(text, reply_markup=kbd)
+        else:    await message.answer(text, reply_markup=kbd)
     except Exception:
         await message.answer(text, reply_markup=kbd)
 
@@ -148,9 +145,8 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
     await message.answer(
         "🧘 *Добро пожаловать в ERP Yoga Bot!*\n\n"
         "_Keep Calm and Get Advice_\n\n"
-        "Я помогу подобрать оптимальную ERP-систему из *Top-10 мировых решений* "
-        "и сформирую готовый бриф для отправки партнёру.\n\n"
-        "Анкета займёт ~3 минуты. 🚀",
+        "Я помогу подобрать оптимальную ERP-систему из *Top-12 мировых решений*. "
+        "Анкета займёт ~2 минуты. 🚀",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="▶️ Начать", callback_data="start_survey")]
         ]),
@@ -168,10 +164,10 @@ async def cb_start(cb: CallbackQuery, state: FSMContext) -> None:
 @dp.callback_query(Survey.question, F.data.startswith("opt:"))
 async def cb_opt(cb: CallbackQuery, state: FSMContext) -> None:
     await cb.answer()
-    # callback_data format: "opt:{step_idx}:{opt_idx}"
-    parts = cb.data.split(":")
+    parts   = cb.data.split(":")
     opt_idx = int(parts[2]) if len(parts) == 3 else 0
-    data = await state.get_data()
+
+    data    = await state.get_data()
     answers = data.get("answers", {})
     idx     = data.get("step", 0)
     visible = get_visible_steps(answers)
@@ -185,10 +181,8 @@ async def cb_opt(cb: CallbackQuery, state: FSMContext) -> None:
     else:
         selected = answers.get(step["id"], [])
         if isinstance(selected, str): selected = [selected]
-        if full_val in selected:
-            selected.remove(full_val)
-        else:
-            selected.append(full_val)
+        if full_val in selected: selected.remove(full_val)
+        else: selected.append(full_val)
         answers[step["id"]] = selected
         await state.update_data(answers=answers)
         await _render_step(cb.message, state, edit=True)
@@ -218,127 +212,111 @@ async def cb_page(cb: CallbackQuery, state: FSMContext) -> None:
     await _render_step(cb.message, state, edit=True)
 
 
-# ── Contact collection ────────────────────────────────────────────────────────
+# ── Result ────────────────────────────────────────────────────────────────────
 
-async def _start_contacts(message: Message, state: FSMContext, edit: bool = False) -> None:
-    await state.update_data(contact_step=0)
-    await state.set_state(Survey.contact)
-    text = "✅ *Анкета заполнена!*\n\nТеперь укажите контактные данные — они попадут в бриф.\n\n" \
-           + CONTACT_STEPS[0]["q"]
-    try:
-        if edit: await message.edit_text(text, reply_markup=None)
-        else:    await message.answer(text)
-    except Exception:
-        await message.answer(text)
-
-
-@dp.message(Survey.contact)
-async def handle_contact(message: Message, state: FSMContext) -> None:
-    data         = await state.get_data()
-    contact_step = data.get("contact_step", 0)
-    answers      = data.get("answers", {})
-
-    step_info = CONTACT_STEPS[contact_step]
-    value     = "" if message.text.strip().lower() == "/skip" else message.text.strip()
-    answers[step_info["id"]] = value
-
-    next_step = contact_step + 1
-    if next_step < len(CONTACT_STEPS):
-        await state.update_data(answers=answers, contact_step=next_step)
-        await message.answer(CONTACT_STEPS[next_step]["q"])
-    else:
-        await state.update_data(answers=answers)
-        await state.set_state(Survey.confirm)
-        await _show_summary(message, state)
-
-
-# ── Summary ───────────────────────────────────────────────────────────────────
-
-async def _show_summary(message: Message, state: FSMContext) -> None:
+async def _show_result(message: Message, state: FSMContext, edit: bool = False) -> None:
     data    = await state.get_data()
     answers = data.get("answers", {})
     top3    = get_top3(answers)
 
-    await state.update_data(top3=[{k: v for k, v in e.items()} for e in top3])
+    # Сохраняем top3 в state для последующих действий
+    await state.update_data(top3=[dict(e) for e in top3])
+    await state.set_state(Survey.result)
 
     partner_text = get_partner_advice(answers)
     top3_text    = format_top3_text(top3, answers)
 
     text = (
-        "📋 *Ваш профиль сформирован!*\n\n"
-        + top3_text +
-        "\n\n━━━━━━━━━━━━━━━━━\n\n"
-        + partner_text +
-        "\n\n━━━━━━━━━━━━━━━━━\n\n"
-        "📨 Нажмите *«Отправить бриф партнёру»* — структурированный запрос "
-        "уйдёт на email со всеми вашими ответами и рекомендациями."
+        "✅ *Анкета заполнена! Вот ваша рекомендация:*\n\n"
+        + top3_text
+        + "\n\n━━━━━━━━━━━━━━━━━\n\n"
+        + partner_text
     )
-    await message.answer(text, reply_markup=_confirm_kbd())
+
+    try:
+        if edit: await message.edit_text(text, reply_markup=_result_kbd())
+        else:    await message.answer(text, reply_markup=_result_kbd())
+    except Exception:
+        await message.answer(text, reply_markup=_result_kbd())
+
+    # Уведомление менеджеру о новом лиде
+    manager_id = os.environ.get("MANAGER_TELEGRAM_ID")
+    if manager_id:
+        industry = answers.get("industry", "?")
+        budgets  = answers.get("budget", [])
+        if isinstance(budgets, str): budgets = [budgets]
+        top_name = top3[0]["name"] if top3 else "?"
+        tg_user  = message.chat.username or str(message.chat.id)
+        try:
+            await bot.send_message(
+                int(manager_id),
+                f"🔔 *Новый лид — ERP Yoga Bot*\n\n"
+                f"*Telegram:* @{tg_user}\n"
+                f"*Отрасль:* {industry}\n"
+                f"*#1 ERP:* {top_name}\n"
+                f"*Бюджет:* {', '.join(budgets)}",
+            )
+        except Exception as e:
+            log.warning(f"Менеджер не уведомлён: {e}")
 
 
-# ── Send brief ────────────────────────────────────────────────────────────────
+# ── Copy brief ────────────────────────────────────────────────────────────────
 
-@dp.callback_query(Survey.confirm, F.data == "send_brief")
-async def cb_send(cb: CallbackQuery, state: FSMContext) -> None:
-    await cb.answer("Отправляем...")
-    await cb.message.edit_reply_markup(reply_markup=None)
-
+@dp.callback_query(Survey.result, F.data == "copy_brief")
+async def cb_copy_brief(cb: CallbackQuery, state: FSMContext) -> None:
+    await cb.answer()
     data    = await state.get_data()
     answers = data.get("answers", {})
     top3    = data.get("top3") or get_top3(answers)
 
-    processing = await cb.message.answer("⏳ Генерирую AI-анализ и отправляю бриф...")
+    brief = build_plain_brief(answers, top3)
+
+    await cb.message.answer(
+        "📋 *Бриф для отправки партнёру / вендору:*\n\n"
+        "Скопируйте текст ниже и отправьте потенциальному поставщику услуг:\n\n"
+        "```\n" + brief + "\n```",
+        reply_markup=_back_kbd(),
+    )
+
+
+# ── Find partners ─────────────────────────────────────────────────────────────
+
+@dp.callback_query(Survey.result, F.data == "find_partners")
+async def cb_find_partners(cb: CallbackQuery, state: FSMContext) -> None:
+    await cb.answer()
+    await state.set_state(Survey.region)
+    await cb.message.answer(
+        "🌍 *Укажите страну или регион*\n\n"
+        "Напишите название страны или города, "
+        "и я помогу найти сертифицированных партнёров по внедрению ERP в вашем регионе.\n\n"
+        "_Например: Россия, Казахстан, ОАЭ, Германия, США..._",
+    )
+
+
+@dp.message(Survey.region)
+async def handle_region(message: Message, state: FSMContext) -> None:
+    region  = message.text.strip()
+    data    = await state.get_data()
+    answers = data.get("answers", {})
+    top3    = data.get("top3") or get_top3(answers)
+
+    top_names = [e["name"] for e in top3[:2]]
+    processing = await message.answer(f"🔍 Ищу партнёров в регионе *{region}*...")
 
     try:
-        ai_text    = await get_ai_recommendation(answers, top3)
-        result     = send_brief(answers, top3)
-        email_id   = result["id"]
-        recipients = result["recipients"]
-        to_display = "\n".join(f"  • `{r}`" for r in recipients)
-
+        from ai_service import get_partners_in_region
+        result = await get_partners_in_region(region, top_names, answers)
         await processing.delete()
-        await cb.message.answer(
-            f"✅ *Бриф отправлен!*\n\n"
-            f"📧 Получатели:\n{to_display}\n"
-            f"🆔 ID письма: `{email_id}`\n\n"
-            "━━━━━━━━━━━━━━━━━\n\n"
-            "🤖 *Развёрнутый AI-анализ:*\n\n" + ai_text,
-            reply_markup=_back_kbd(),
-        )
-
-        # Notify manager
-        manager_id = os.environ.get("MANAGER_TELEGRAM_ID")
-        if manager_id:
-            company  = answers.get("contact_company", "?")
-            name     = answers.get("contact_name", "?")
-            industry = answers.get("industry", "?")
-            top_name = top3[0]["name"] if top3 else "?"
-            budgets  = answers.get("budget", [])
-            if isinstance(budgets, str): budgets = [budgets]
-            try:
-                await bot.send_message(
-                    int(manager_id),
-                    f"🔔 *Новый лид — ERP Yoga Bot*\n\n"
-                    f"*Компания:* {company}\n"
-                    f"*Контакт:* {name}\n"
-                    f"*Отрасль:* {industry}\n"
-                    f"*#1 ERP:* {top_name}\n"
-                    f"*Бюджет:* {', '.join(budgets)}\n"
-                    f"*Email ID:* `{email_id}`\n"
-                    f"*Бриф ушёл на:* {', '.join(recipients)}",
-                )
-            except Exception as e:
-                log.warning(f"Не удалось уведомить менеджера: {e}")
-
+        await message.answer(result, reply_markup=_back_kbd())
     except Exception as e:
-        log.error(f"Ошибка отправки: {e}")
+        log.error(f"Ошибка поиска партнёров: {e}")
         await processing.delete()
-        await cb.message.answer(
-            f"❌ *Ошибка:* `{e}`\n\n"
-            "Проверьте RESEND_API_KEY и RESEND_FROM_EMAIL.\n"
-            "Для теста: RESEND_FROM_EMAIL=onboarding@resend.dev",
+        await message.answer(
+            f"❌ Не удалось получить список партнёров: `{e}`",
             reply_markup=_back_kbd(),
         )
+
+    await state.set_state(Survey.result)
 
 
 # ── Restart ───────────────────────────────────────────────────────────────────
@@ -366,8 +344,9 @@ async def cmd_help(message: Message) -> None:
         "_Keep Calm and Get Advice_\n\n"
         "/start — начать анкету\n"
         "/help — эта справка\n\n"
-        "Бот задаёт вопросы, рекомендует Top-3 ERP из 12 мировых систем "
-        "и отправляет структурированный бриф партнёру по email.\n\n"
+        "Бот рекомендует Top-3 ERP из 12 мировых систем, "
+        "формирует бриф для отправки вендору и помогает найти "
+        "партнёров по внедрению в вашем регионе.\n\n"
         "_Рекомендации основаны на официальных сайтах вендоров и аналитических источниках. "
         "Разработан сертифицированными экспертами._"
     )
@@ -383,11 +362,7 @@ async def fallback(message: Message, state: FSMContext) -> None:
 
 @dp.callback_query()
 async def cb_fallback(cb: CallbackQuery, state: FSMContext) -> None:
-    """Ловит любые необработанные callback — устаревшие кнопки после редеплоя."""
-    await cb.answer(
-        "⚠️ Эта кнопка устарела после обновления бота. Нажмите /start",
-        show_alert=True,
-    )
+    await cb.answer("⚠️ Устаревшая кнопка. Нажмите /start", show_alert=True)
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
@@ -400,8 +375,6 @@ bot = Bot(
 
 async def main() -> None:
     log.info("🧘 ERP Yoga Bot (@SAPyogaBOT) запускается...")
-    # Сбрасываем webhook и удаляем накопившиеся апдейты при старте —
-    # предотвращает TelegramConflictError при редеплое на Railway
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(
         bot,

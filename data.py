@@ -195,9 +195,9 @@ STEPS = [
     },
     {
         "id": "partner_concerns", "block": "partner",
-        "q": "🤝 Что важно при выборе партнёра по внедрению?",
-        "sub": "Можно выбрать несколько. Нажмите «Готово» когда закончите.",
-        "type": "multi",
+        "q": "🤝 Что важнее всего при выборе партнёра по внедрению?",
+        "sub": "Выберите главный приоритет",
+        "type": "single",
         "opts": [
             "Сертификаты и статус партнёра вендора",
             "Отраслевые кейсы и референсы",
@@ -557,7 +557,7 @@ def format_top3_text(top3: list[dict], ans: dict) -> str:
             f"*{erp['name']}* ({erp['vendor']})",
             f"TCO: {tco_label} ({erp['tco']}) | {erp['deploy_types'][0].upper()}",
             f"✅ {pros}",
-            f"🔗 [sap.com / официальный сайт]({erp['url']})",
+            f"🔗 [{erp['vendor']} / официальный сайт]({erp['url']})",
             "",
         ]
 
@@ -568,3 +568,64 @@ def format_top3_text(top3: list[dict], ans: dict) -> str:
         "Окончательный выбор уточняется после детального анализа требований._"
     )
     return "\n".join(lines)
+
+
+
+def build_plain_brief(ans: dict, top3: list[dict]) -> str:
+    """Текстовый бриф для ручного копирования и отправки вендору."""
+    budgets = ans.get("budget", [])
+    if isinstance(budgets, str):
+        budgets = [budgets]
+    areas = ans.get("areas", [])
+    pains = ans.get("pain", [])
+    teams = ans.get("has_team", [])
+    if isinstance(teams, str):
+        teams = [teams]
+    concerns = ans.get("partner_concerns", "")
+    if isinstance(concerns, list):
+        concerns = ", ".join(concerns)
+
+    sep = "\n"
+    areas_str = (sep.join("  - " + a for a in areas)) if areas else "—"
+    pains_str = (sep.join("  - " + p for p in pains)) if pains else "—"
+
+    erp_lines = []
+    for i, e in enumerate(top3):
+        label = ["#1 Лучший выбор", "#2 Альтернатива", "#3 Выгодно по TCO"][i]
+        erp_lines.append(
+            label + ": " + e["name"] + " (" + e["vendor"] + ")"
+            + " | TCO: " + e["tco"]
+            + "\n    Сайт: " + e["url"]
+        )
+
+    parts = [
+        "=== ERP YOGA BOT — ЗАПРОС НА ПОДБОР ERP ===",
+        "",
+        "Отрасль:          " + ans.get("industry", "—"),
+        "Размер компании:  " + ans.get("size", "—"),
+        "Масштаб:          " + ans.get("geo", "—"),
+        "Текущий IT:       " + ans.get("current", "—"),
+        "ЦОД / инфра:      " + ans.get("datacenter", "—"),
+        "",
+        "Функц. области:",
+        areas_str,
+        "",
+        "Ключевые боли:",
+        pains_str,
+        "",
+        "Бюджет (год 1):   " + (", ".join(budgets) if budgets else "—"),
+        "Сроки:            " + ans.get("timeline", "—"),
+        "Приоритет:        " + ans.get("priority", "—"),
+        "",
+        "IT-команда:       " + (", ".join(teams) if teams else "—"),
+        "Требования к партнёру: " + (concerns or "—"),
+        "",
+        "--- TOP-3 РЕКОМЕНДОВАННЫХ ERP ---",
+    ] + erp_lines + [
+        "",
+        "Рекомендации: ERP Yoga Bot @SAPyogaBOT",
+        "Источники: sap.com и официальные сайты вендоров.",
+        "Разработан сертифицированными экспертами.",
+        "Выбор уточняется после детального анализа требований.",
+    ]
+    return "\n".join(parts)
