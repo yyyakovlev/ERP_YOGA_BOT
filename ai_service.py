@@ -51,7 +51,7 @@ TOP-3 РЕКОМЕНДОВАННЫХ ERP:
 В конце: одна строка дисклеймера про независимость рекомендаций."""
 
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-5",
         max_tokens=1200,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content": prompt}],
@@ -126,7 +126,7 @@ async def get_partners_in_region(region: str, erp_names: list[str], answers: dic
     )
 
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-5",
         max_tokens=1000,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content": prompt}],
