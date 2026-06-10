@@ -381,6 +381,15 @@ async def fallback(message: Message, state: FSMContext) -> None:
         await message.answer("🧘 Напишите /start чтобы начать подбор ERP-системы.")
 
 
+@dp.callback_query()
+async def cb_fallback(cb: CallbackQuery, state: FSMContext) -> None:
+    """Ловит любые необработанные callback — устаревшие кнопки после редеплоя."""
+    await cb.answer(
+        "⚠️ Эта кнопка устарела после обновления бота. Нажмите /start",
+        show_alert=True,
+    )
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 bot = Bot(
@@ -391,7 +400,14 @@ bot = Bot(
 
 async def main() -> None:
     log.info("🧘 ERP Yoga Bot (@SAPyogaBOT) запускается...")
-    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+    # Сбрасываем webhook и удаляем накопившиеся апдейты при старте —
+    # предотвращает TelegramConflictError при редеплое на Railway
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(
+        bot,
+        allowed_updates=dp.resolve_used_update_types(),
+        drop_pending_updates=True,
+    )
 
 
 if __name__ == "__main__":
