@@ -620,7 +620,6 @@ def build_plain_brief(ans: dict, top3: list[dict]) -> str:
         "IT-команда:       " + (", ".join(teams) if teams else "—"),
         "Требования к партнёру: " + (concerns or "—"),
         "",
-        "--- TOP-3 РЕКОМЕНДОВАННЫХ ERP ---",
     ] + erp_lines + [
         "",
         "Рекомендации: ERP Yoga Bot @SAPyogaBOT",

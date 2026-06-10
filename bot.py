@@ -85,7 +85,6 @@ def _result_kbd() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text="🔄 Пройти заново",             callback_data="restart")],
     ])
 
-
 def _back_kbd() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🔄 Начать заново", callback_data="restart")]
@@ -300,8 +299,8 @@ async def handle_region(message: Message, state: FSMContext) -> None:
     answers = data.get("answers", {})
     top3    = data.get("top3") or get_top3(answers)
 
-    top_names = [e["name"] for e in top3[:2]]
-    processing = await message.answer(f"🔍 Ищу партнёров в регионе *{region}*...")
+    top_names = [e["name"] for e in top3]  # все три продукта
+    processing = await message.answer(f"🔍 Ищу партнёров в регионе *{region}*... ⏳ до 30 сек")
 
     try:
         from ai_service import get_partners_in_region
@@ -317,6 +316,7 @@ async def handle_region(message: Message, state: FSMContext) -> None:
         )
 
     await state.set_state(Survey.result)
+
 
 
 # ── Restart ───────────────────────────────────────────────────────────────────

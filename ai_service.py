@@ -104,38 +104,54 @@ def get_partner_advice(answers: dict) -> str:
 
 async def get_partners_in_region(region: str, erp_names: list[str], answers: dict) -> str:
     """Ищет сертифицированных партнёров по ERP в указанном регионе через web_search."""
+    import asyncio
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     industry = answers.get("industry", "")
-    systems = " и ".join(erp_names) if erp_names else "ERP"
+    all_systems = ", ".join(erp_names) if erp_names else "ERP"
 
     prompt = (
-        "Найди сертифицированных партнёров по внедрению " + systems
-        + " в регионе: " + region + ".\n"
-        + "Отрасль клиента: " + industry + ".\n\n"
-        + "Используй web_search для поиска актуальной информации.\n"
-        + "Найди 3-5 конкретных компаний-партнёров с:\n"
-        + "- Названием компании\n"
-        + "- Сайтом\n"
-        + "- Кратким описанием специализации\n"
-        + "- Статусом партнёрства (если найдёшь)\n\n"
-        + "Также укажи официальные инструменты поиска партнёров:\n"
-        + "- SAP Partner Finder: https://www.sap.com/partner/find.html\n"
-        + "- Microsoft Partner: https://partner.microsoft.com/en-us/partnership/find-a-partner\n"
-        + "- Oracle Partner: https://partner.oracle.com/\n\n"
-        + "Формат ответа: Telegram Markdown, кратко и конкретно."
+        "Ты — ассистент по подбору ERP-партнёров. Отвечай строго на русском языке.\n\n"
+        "ЗАДАЧА: Найди партнёров по внедрению ERP в регионе: " + region + ".\n"
+        "Отрасль клиента: " + industry + ".\n"
+        "Рекомендованные системы: " + all_systems + ".\n\n"
+        "ПРАВИЛА:\n"
+        "1. Только русский язык.\n"
+        "2. Только о партнёрах и ERP. Никакой политики и геополитики.\n"
+        "3. Если нет локальных партнёров — предложи ближайший регион.\n\n"
+        "ФОРМАТ (строго кратко, не более 30 строк всего):\n"
+        "Для каждой системы — блок *🔹 Название системы* и 2 партнёра:\n"
+        "• Компания — сайт — специализация\n\n"
+        "В конце одна строка со ссылками на Partner Finder всех вендоров."
     )
 
-    response = client.messages.create(
-        model="claude-sonnet-4-5",
-        max_tokens=1000,
-        tools=[{"type": "web_search_20250305", "name": "web_search"}],
-        messages=[{"role": "user", "content": prompt}],
-    )
+    # Retry при rate limit (429) — ждём и пробуем ещё раз
+    for attempt in range(3):
+        try:
+            response = client.messages.create(
+                model="claude-sonnet-4-5",
+                max_tokens=800,
+                tools=[{"type": "web_search_20250305", "name": "web_search"}],
+                messages=[{"role": "user", "content": prompt}],
+            )
+            parts = [b.text for b in response.content if hasattr(b, "type") and b.type == "text"]
+            if parts:
+                return "\n".join(parts)
+            break
+        except Exception as e:
+            err = str(e)
+            if "429" in err and attempt < 2:
+                wait = (attempt + 1) * 15  # 15s, 30s
+                log.warning(f"Rate limit hit, retrying in {wait}s (attempt {attempt+1})")
+                await asyncio.sleep(wait)
+                continue
+            # Не rate limit или исчерпали попытки
+            raise
 
-    parts = [b.text for b in response.content if hasattr(b, "type") and b.type == "text"]
-    if parts:
-        return "\n".join(parts)
     return (
-        "По запросу '" + region + "' партнёры не найдены. "
-        + "Используйте SAP Partner Finder: https://www.sap.com/partner/find.html"
+        "По запросу *" + region + "* партнёры не найдены.\n\n"
+        "*🔍 Найдите партнёров самостоятельно:*\n"
+        "• SAP: https://www.sap.com/partner/find.html\n"
+        "• Microsoft: https://partner.microsoft.com\n"
+        "• Oracle: https://partner.oracle.com\n"
+        "• Infor: https://www.infor.com/partners"
     )
