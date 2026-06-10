@@ -289,13 +289,15 @@ async def cb_send(cb: CallbackQuery, state: FSMContext) -> None:
 
     try:
         ai_text    = await get_ai_recommendation(answers, top3)
-        email_id   = send_brief(answers, top3)
-        partner_email = os.environ.get("PARTNER_EMAIL", "")
+        result     = send_brief(answers, top3)
+        email_id   = result["id"]
+        recipients = result["recipients"]
+        to_display = "\n".join(f"  • `{r}`" for r in recipients)
 
         await processing.delete()
         await cb.message.answer(
             f"✅ *Бриф отправлен!*\n\n"
-            f"📧 На: `{partner_email}`\n"
+            f"📧 Получатели:\n{to_display}\n"
             f"🆔 ID письма: `{email_id}`\n\n"
             "━━━━━━━━━━━━━━━━━\n\n"
             "🤖 *Развёрнутый AI-анализ:*\n\n" + ai_text,
@@ -320,7 +322,8 @@ async def cb_send(cb: CallbackQuery, state: FSMContext) -> None:
                     f"*Отрасль:* {industry}\n"
                     f"*#1 ERP:* {top_name}\n"
                     f"*Бюджет:* {', '.join(budgets)}\n"
-                    f"*Email ID:* `{email_id}`",
+                    f"*Email ID:* `{email_id}`\n"
+                    f"*Бриф ушёл на:* {', '.join(recipients)}",
                 )
             except Exception as e:
                 log.warning(f"Не удалось уведомить менеджера: {e}")
@@ -330,7 +333,7 @@ async def cb_send(cb: CallbackQuery, state: FSMContext) -> None:
         await processing.delete()
         await cb.message.answer(
             f"❌ *Ошибка:* `{e}`\n\n"
-            "Проверьте RESEND_API_KEY и PARTNER_EMAIL.\n"
+            "Проверьте RESEND_API_KEY и RESEND_FROM_EMAIL.\n"
             "Для теста: RESEND_FROM_EMAIL=onboarding@resend.dev",
             reply_markup=_back_kbd(),
         )

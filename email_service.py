@@ -143,21 +143,59 @@ def build_html_email(answers: dict, top3: list[dict]) -> str:
 </html>"""
 
 
-def send_brief(answers: dict, top3: list[dict], to_email: str | None = None) -> str:
-    """Отправляет HTML-бриф через Resend. Возвращает ID письма."""
+def _parse_emails(raw: str) -> list[str]:
+    """Парсит строку с одним или несколькими email через запятую/пробел."""
+    import re
+    found = re.findall(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", raw or "")
+    return list(dict.fromkeys(found))  # deduplicate, keep order
+
+
+def send_brief(answers: dict, top3: list[dict]) -> dict:
+    """
+    Отправляет HTML-бриф через Resend.
+
+    Получатели:
+      1. send_to_email из анкеты (клиент сам указал — себе и/или партнёру)
+      2. Если не указан — fallback на contact_email клиента
+      3. MANAGER_EMAIL из .env (опц.) — всегда получает копию как BCC
+
+    Возвращает dict: {"id": "...", "recipients": [...]}
+    """
     resend.api_key = os.environ["RESEND_API_KEY"]
-    recipient = to_email or os.environ["PARTNER_EMAIL"]
     from_addr = os.environ.get("RESEND_FROM_EMAIL", "onboarding@resend.dev")
+
+    # Основные получатели — то, что ввёл клиент
+    raw_to = answers.get("send_to_email", "")
+    if not raw_to or raw_to == "/skip":
+        raw_to = answers.get("contact_email", "")
+
+    recipients = _parse_emails(raw_to)
+
+    # Fallback если вообще ничего нет
+    if not recipients:
+        raise ValueError(
+            "Не указан email для отправки. "
+            "Попросите клиента ввести адрес заново."
+        )
 
     company  = answers.get("contact_company", "")
     industry = answers.get("industry", "")
-    subject  = f"ERP-бриф: {company} — {industry}" if company else "ERP Yoga Bot — Запрос на подбор ERP"
+    subject  = f"🧘 ERP-бриф: {company} — {industry}" if company \
+               else "🧘 ERP Yoga Bot — Запрос на подбор ERP-системы"
+
+    html_body = build_html_email(answers, top3)
 
     params: resend.Emails.SendParams = {
         "from": from_addr,
-        "to": [recipient],
+        "to": recipients,
         "subject": subject,
-        "html": build_html_email(answers, top3),
+        "html": html_body,
     }
+
+    # BCC менеджеру — копия каждого лида без раскрытия адреса
+    manager_email = os.environ.get("MANAGER_EMAIL", "")
+    if manager_email and manager_email not in recipients:
+        params["bcc"] = [manager_email]
+
     response = resend.Emails.send(params)
-    return response["id"]
+    return {"id": response["id"], "recipients": recipients}
