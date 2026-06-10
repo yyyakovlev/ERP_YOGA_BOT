@@ -55,13 +55,15 @@ class Survey(StatesGroup):
 
 # ── Keyboard helpers ──────────────────────────────────────────────────────────
 
-def _opts_kbd(opts: list[str], q_type: str, selected: list[str], page: int = 0) -> InlineKeyboardMarkup:
+def _opts_kbd(opts: list[str], q_type: str, selected: list[str], page: int = 0, step_idx: int = 0) -> InlineKeyboardMarkup:
+    """callback_data = opt:{step_idx}:{opt_idx} — числовые индексы, кириллица не превышает лимит 64 байта."""
     start, end = page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE
     rows = []
 
-    for opt in opts[start:end]:
+    for abs_idx in range(start, min(end, len(opts))):
+        opt = opts[abs_idx]
         prefix = "✅ " if opt in selected else ""
-        cb = f"opt:{opt[:60]}"
+        cb = f"opt:{step_idx}:{abs_idx}"
         rows.append([InlineKeyboardButton(text=prefix + opt, callback_data=cb)])
 
     nav = []
@@ -125,7 +127,7 @@ async def _render_step(message: Message, state: FSMContext, edit: bool = False) 
     page = data.get("page", 0)
 
     text = _step_text(step, idx + 1, len(visible), selected)
-    kbd  = _opts_kbd(step["opts"], step["type"], selected, page)
+    kbd  = _opts_kbd(step["opts"], step["type"], selected, page, step_idx=idx)
 
     try:
         if edit:
@@ -166,15 +168,15 @@ async def cb_start(cb: CallbackQuery, state: FSMContext) -> None:
 @dp.callback_query(Survey.question, F.data.startswith("opt:"))
 async def cb_opt(cb: CallbackQuery, state: FSMContext) -> None:
     await cb.answer()
-    val  = cb.data[4:]
+    # callback_data format: "opt:{step_idx}:{opt_idx}"
+    parts = cb.data.split(":")
+    opt_idx = int(parts[2]) if len(parts) == 3 else 0
     data = await state.get_data()
     answers = data.get("answers", {})
     idx     = data.get("step", 0)
     visible = get_visible_steps(answers)
     step    = visible[idx]
-
-    # Restore full value (may have been truncated in callback_data)
-    full_val = next((o for o in step["opts"] if o[:60] == val), val)
+    full_val = step["opts"][opt_idx]
 
     if step["type"] == "single":
         answers[step["id"]] = full_val
