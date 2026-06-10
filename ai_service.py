@@ -3,8 +3,11 @@ ERP Yoga Bot — AI-сервис
 Claude API + web_search для актуальных данных о ERP-системах
 """
 from __future__ import annotations
+import logging
 import os
 import anthropic
+
+log = logging.getLogger(__name__)
 
 
 async def get_ai_recommendation(answers: dict, top3: list[dict]) -> str:
