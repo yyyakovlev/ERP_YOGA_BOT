@@ -1,6 +1,6 @@
 # 🧘 ERP Yoga Bot
 
-> **Keep Calm and Get Advice** · [@SAPyogaBOT](https://t.me/erp_yoga_bot)
+> **Keep Calm and Get Advice** · [@ERP_YOGA_BOT](https://t.me/erp_yoga_bot)
 
 Независимый Telegram-бот для подбора ERP-системы из **Top-12 мировых решений** с автоматической отправкой структурированного брифа партнёру.
 
