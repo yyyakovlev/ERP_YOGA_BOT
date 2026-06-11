@@ -1,81 +1,215 @@
 """
-ERP Yoga Bot — база вопросов, ERP-решений и логика рекомендаций
+ERP Yoga Bot — data.py
+Вопросы анкеты, загрузка knowledge_base.json, скоринг, форматирование
 @SAPyogaBOT | Keep Calm and Get Advice
 """
 from __future__ import annotations
 
+import json
+import logging
+from pathlib import Path
+from functools import lru_cache
+
+log = logging.getLogger(__name__)
+
+# ── Knowledge Base ────────────────────────────────────────────────────────────
+
+KB_PATH = Path(__file__).parent / "knowledge_base.json"
+
+
+@lru_cache(maxsize=1)
+def _load_kb() -> dict:
+    """Загружает knowledge_base.json один раз при старте."""
+    if not KB_PATH.exists():
+        log.warning(f"knowledge_base.json not found at {KB_PATH} — using empty KB")
+        return {"erp_systems": [], "industry_solutions": [], "integrations": [], "compliance": []}
+    with open(KB_PATH, encoding="utf-8") as f:
+        kb = json.load(f)
+    log.info(
+        f"KB loaded: {len(kb['erp_systems'])} systems, "
+        f"{len(kb['industry_solutions'])} industry solutions, "
+        f"{len(kb['integrations'])} integrations"
+    )
+    return kb
+
+
+def _kb_system(erp_id: str) -> dict:
+    """Возвращает запись системы из KB или пустой dict."""
+    return next((s for s in _load_kb()["erp_systems"] if s["id"] == erp_id), {})
+
+
+def _kb_compliance(erp_id: str) -> dict:
+    """Возвращает compliance-запись из KB."""
+    return next((c for c in _load_kb()["compliance"] if c["erp_id"] == erp_id), {})
+
+
+def _kb_industry_solutions(erp_id: str, industry_key: str) -> list[dict]:
+    """Возвращает отраслевые решения для системы и отрасли."""
+    return [
+        x for x in _load_kb()["industry_solutions"]
+        if x["erp_id"] == erp_id and x["industry_key"] == industry_key
+    ]
+
+
+def _kb_integrations(erp_id: str) -> list[dict]:
+    """Возвращает все интеграционные записи для системы."""
+    return [x for x in _load_kb()["integrations"] if x["erp_id"] == erp_id]
+
+
+# ── Маппинг: текст анкеты → ключи KB ─────────────────────────────────────────
+
+# Маппинг вариантов ответа на отрасль → industry_key в KB
+INDUSTRY_KEY_MAP: dict[str, str] = {
+    "Производство дискретное":       "manufacturing_discrete",
+    "Производство процессное":        "manufacturing_process",
+    "Нефть, газ / Горнодобыча":      "oil_gas",
+    "Нефть":                          "oil_gas",
+    "Горнодоб":                       "mining",
+    "Энергетика и ЖКХ":              "energy",
+    "Розничная торговля":             "retail",
+    "Оптовая торговля / Дистрибуция":"wholesale",
+    "Дистрибуция":                    "distribution",
+    "Логистика и транспорт":          "logistics",
+    "Строительство и недвижимость":   "construction",
+    "Банки и финансовые услуги":      "banking",
+    "Банки":                          "banking",
+    "Телекоммуникации":               "telecom",
+    "Здравоохранение / Фарма":       "healthcare",
+    "Здравоохр":                      "healthcare",
+    "Фарма":                          "pharma",
+    "Государственный сектор":         "public_sector",
+    "Агробизнес / Пищепром":         "food_beverage",
+    "IT и профессиональные услуги":   "it_services",
+    "Аэрокосмос и оборонка":          "aerospace",
+    "Аэрокосмос":                     "aerospace",
+}
+
+# Маппинг integration_key для вопроса об интеграциях
+INTEGRATION_KEY_MAP: dict[str, str] = {
+    "Государственные порталы и сервисы":                     "gov_portals",
+    "Системы BI и аналитики (Power BI, Tableau, Qlik)":      "bi_analytics",
+    "Профильные отраслевые системы (MES, WMS, TMS)":         "mes_wms_tms",
+    "Банковские системы и эквайринг":                        "banking",
+    "CRM-системы (Salesforce, HubSpot)":                     "crm",
+    "Электронный документооборот (EDI, ЮЗЭДО)":              "edo",
+    "Маркетплейсы и e-commerce (Ozon, Wildberries, Shopify)":"ecommerce",
+    "HR-системы (SAP SuccessFactors, 1С:ЗУП)":               "hr_systems",
+    "IoT и производственные системы (SCADA, OPC-UA)":        "iot_scada",
+}
+
+
+def _industry_key(industry_text: str) -> str:
+    """Конвертирует текст отрасли из анкеты в industry_key."""
+    for fragment, key in INDUSTRY_KEY_MAP.items():
+        if fragment in industry_text:
+            return key
+    return ""
+
+
+# ── Вопросы анкеты ────────────────────────────────────────────────────────────
+
 STEPS = [
-    # ── Блок 1: Профиль проекта ──────────────────────────────────────────
     {
         "id": "industry", "block": "main",
-        "q": "🏭 В какой отрасли работает компания?",
+        "q": "В какой отрасли работает компания?",
         "sub": "Выберите наиболее подходящую",
         "type": "single",
         "opts": [
-            "Производство дискретное (машиностроение, электроника)",
-            "Производство процессное (химия, фармацевтика, FMCG)",
-            "Нефть и газ / Горнодобывающая промышленность",
-            "Энергетика и коммунальные услуги",
-            "Розничная торговля (Retail)",
+            "Производство дискретное",
+            "Производство процессное",
+            "Нефть, газ / Горнодобыча",
+            "Энергетика и ЖКХ",
+            "Розничная торговля",
             "Оптовая торговля / Дистрибуция",
             "Логистика и транспорт",
             "Строительство и недвижимость",
-            "Банки и финансовые услуги / Страхование",
+            "Банки и финансовые услуги",
             "Телекоммуникации",
-            "Здравоохранение / Фармацевтика",
+            "Здравоохранение / Фарма",
             "Государственный сектор",
-            "Агробизнес / Пищевая промышленность",
+            "Агробизнес / Пищепром",
             "IT и профессиональные услуги",
-            "Аэрокосмос / Оборонная промышленность",
+            "Аэрокосмос и оборонка",
         ],
     },
     {
         "id": "size", "block": "main",
-        "q": "👥 Размер компании",
+        "q": "Размер компании",
         "sub": "По количеству сотрудников",
         "type": "single",
         "opts": [
-            "Стартап / Малый бизнес (до 50)",
-            "Малый-средний (50–200)",
-            "Средний (200–1000)",
-            "Крупный (1000–10 000)",
-            "Корпорация / холдинг (10 000+)",
+            "До 50 сотрудников",
+            "50–200 сотрудников",
+            "200–1000 сотрудников",
+            "1000–10 000 сотрудников",
+            "Свыше 10 000 сотрудников",
+        ],
+    },
+    {
+        "id": "audit", "block": "main",
+        "q": "Требования к прозрачности учёта",
+        "sub": "Определяет круг допустимых систем",
+        "type": "single",
+        "opts": [
+            "Нет особых требований",
+            "Ежегодный внешний аудит (Big4 / независимый)",
+            "Подготовка к IPO или листингу на бирже",
+            "Публичная компания — SOX / IFRS / МСФО",
+            "Регуляторные требования (банки, госсектор)",
         ],
     },
     {
         "id": "geo", "block": "main",
-        "q": "🌍 Масштаб операций",
+        "q": "Масштаб операций",
         "type": "single",
         "opts": [
-            "Локальный — одна страна",
-            "Региональный — несколько стран",
-            "Глобальный — мультинациональный",
+            "Одна страна",
+            "Несколько стран",
+            "Глобально — мультинациональный",
         ],
     },
     {
         "id": "areas", "block": "main",
-        "q": "⚙️ Какие функциональные области нужно автоматизировать?",
-        "sub": "Можно выбрать несколько. Нажмите «Готово» когда закончите.",
+        "q": "Функциональные области для автоматизации",
+        "sub": "Можно выбрать несколько",
         "type": "multi",
         "opts": [
             "Финансы и контроллинг",
             "Закупки и снабжение",
-            "Управление цепочкой поставок (SCM)",
+            "Цепочка поставок (SCM)",
             "Производство / MES",
             "Продажи и дистрибуция",
             "Управление складом",
             "HR и управление персоналом",
-            "Техническое обслуживание активов (EAM)",
+            "Техобслуживание активов (EAM)",
             "Проекты и сервис",
             "CRM и управление клиентами",
             "Аналитика и отчётность",
-            "Охрана окружающей среды / ESG",
+            "Экология / ESG",
+        ],
+    },
+    {
+        "id": "integrations", "block": "main",
+        "q": "Требования к интеграциям",
+        "sub": "С какими системами должен работать ERP? Можно выбрать несколько",
+        "type": "multi",
+        "opts": [
+            "Нет требований к интеграции",
+            "Государственные порталы и сервисы",
+            "Системы BI и аналитики (Power BI, Tableau, Qlik)",
+            "Профильные отраслевые системы (MES, WMS, TMS)",
+            "Банковские системы и эквайринг",
+            "CRM-системы (Salesforce, HubSpot)",
+            "Электронный документооборот (EDI, ЮЗЭДО)",
+            "Маркетплейсы и e-commerce (Ozon, Wildberries, Shopify)",
+            "HR-системы (SAP SuccessFactors, 1С:ЗУП)",
+            "IoT и производственные системы (SCADA, OPC-UA)",
         ],
     },
     {
         "id": "pain", "block": "main",
-        "q": "🎯 Главные боли / приоритеты проекта",
-        "sub": "Можно выбрать несколько. Нажмите «Готово» когда закончите.",
+        "q": "Главные боли и приоритеты",
+        "sub": "Можно выбрать несколько",
         "type": "multi",
         "opts": [
             "Нет единой системы, данные разрозненны",
@@ -91,10 +225,10 @@ STEPS = [
     },
     {
         "id": "current", "block": "main",
-        "q": "💻 Текущий IT-ландшафт",
+        "q": "Текущий IT-ландшафт",
         "type": "single",
         "opts": [
-            "Нет ERP — работаем в Excel / 1С / самописном",
+            "Нет ERP — работаем в Excel / 1С",
             "SAP ECC / R3 — планируем миграцию",
             "Другой ERP — планируем замену",
             "Microsoft стек (D365 / AX / NAV)",
@@ -102,44 +236,41 @@ STEPS = [
             "Гибридная среда",
         ],
     },
-
-    # ── Блок 2: Инфраструктура ────────────────────────────────────────────
     {
         "id": "datacenter", "block": "infra",
-        "q": "🏢 Готовы ли вы инвестировать в собственный ЦОД?",
-        "sub": "Это определяет возможность On-Premise решений",
+        "q": "Готовы инвестировать в собственный ЦОД?",
+        "sub": "Определяет возможность On-Premise решений",
         "type": "single",
         "opts": [
-            "Да — у нас уже есть собственный ЦОД и IT-команда",
-            "Да — готовы построить / арендовать ЦОД",
-            "Нет — предпочитаем облако, не хотим заниматься инфраструктурой",
-            "Нет — но хотим Private Cloud у вендора (изолированная среда)",
-            "Частично — гибридная модель (часть on-prem, часть в облаке)",
+            "Да — есть ЦОД и IT-команда",
+            "Да — готовы построить или арендовать",
+            "Нет — только облако",
+            "Нет — хотим Private Cloud у вендора",
+            "Частично — гибридная модель",
         ],
     },
     {
         "id": "deploy_reason", "block": "infra",
-        "q": "🔒 Основная причина выбора On-Premise / Private Cloud?",
+        "q": "Основная причина выбора On-Premise / Private Cloud?",
         "sub": "Поможет точнее подобрать решение",
         "type": "single",
-        # Показывается только если выбран on-prem/hybrid/private сценарий
-        "conditional": lambda ans: any(k in (ans.get("datacenter") or "")
-            for k in ["есть собственный", "построить", "Private Cloud", "гибридная"]),
+        "conditional": lambda ans: any(
+            k in (ans.get("datacenter") or "")
+            for k in ["ЦОД и IT", "построить", "Private Cloud", "гибридная"]
+        ),
         "opts": [
-            "Требования к суверенитету данных / регуляторика",
-            "Сложная кастомизация — стандартное облако не подойдёт",
-            "Уже вложены в инфраструктуру, хотим использовать",
-            "Соображения безопасности / изоляции",
-            "Нет стабильного интернет-соединения на площадках",
-            "Корпоративная политика — только on-premise",
+            "Суверенитет данных / регуляторика",
+            "Нужна сложная кастомизация",
+            "Уже есть своя инфраструктура",
+            "Безопасность / изоляция среды",
+            "Нет стабильного интернета",
+            "Корпоративная политика",
         ],
     },
-
-    # ── Блок 1 (продолжение) ──────────────────────────────────────────────
     {
         "id": "budget", "block": "main",
-        "q": "💰 Индикативный бюджет на ERP (первый год)",
-        "sub": "Лицензия + внедрение + инфраструктура",
+        "q": "Индикативный бюджет на первый год",
+        "sub": "Лицензии + внедрение + инфраструктура",
         "type": "single",
         "opts": [
             "До $30K",
@@ -153,19 +284,19 @@ STEPS = [
     },
     {
         "id": "timeline", "block": "main",
-        "q": "📅 Желаемые сроки внедрения",
+        "q": "Желаемые сроки внедрения",
         "type": "single",
         "opts": [
-            "До 3 месяцев — быстрый старт",
-            "3–6 месяцев — стандартный SaaS",
-            "6–12 месяцев — сложный проект",
-            "Свыше 12 месяцев / поэтапный rollout",
+            "До 3 месяцев",
+            "3–6 месяцев",
+            "6–12 месяцев",
+            "Свыше 12 месяцев / поэтапно",
         ],
     },
     {
         "id": "priority", "block": "main",
-        "q": "⭐️ Что важнее при выборе ERP?",
-        "sub": "Выберите главный приоритет",
+        "q": "Что важнее при выборе ERP?",
+        "sub": "Выберите один главный приоритет",
         "type": "single",
         "opts": [
             "Глубина отраслевой функциональности",
@@ -173,30 +304,28 @@ STEPS = [
             "Минимальная стоимость владения (TCO)",
             "Гибкость и возможность кастомизации",
             "Экосистема партнёров и поддержка",
-            "Открытый исходный код / независимость от вендора",
+            "Открытый исходный код / независимость",
         ],
     },
-
-    # ── Блок 3: Партнёр ───────────────────────────────────────────────────
     {
         "id": "has_team", "block": "partner",
-        "q": "👨‍💼 Есть ли внутренняя IT-команда для поддержки ERP?",
+        "q": "Внутренняя IT-команда для поддержки ERP?",
         "sub": "Выберите наиболее подходящий вариант",
         "type": "single",
         "opts": [
-            "Опытные ERP-архитекторы / консультанты",
-            "IT-команда общего профиля (без ERP-специализации)",
-            "Финансовые аналитики / ключевые пользователи",
-            "SAP-сертифицированные специалисты",
-            "Разработчики (для кастомизации)",
-            "Нет IT-команды — полностью на партнёре",
+            "Есть ERP-архитекторы / консультанты",
+            "Есть IT-команда общего профиля",
+            "Есть финансовые аналитики / Key Users",
+            "Есть SAP-сертифицированные специалисты",
+            "Есть разработчики для кастомизации",
+            "Нет команды — полностью на партнёре",
             "Планируем нанять после выбора системы",
         ],
     },
     {
         "id": "partner_concerns", "block": "partner",
-        "q": "🤝 Что важно при выборе партнёра по внедрению?",
-        "sub": "Можно выбрать несколько. Нажмите «Готово» когда закончите.",
+        "q": "Что важно при выборе партнёра?",
+        "sub": "Можно выбрать несколько",
         "type": "multi",
         "opts": [
             "Сертификаты и статус партнёра вендора",
@@ -212,168 +341,47 @@ STEPS = [
 ]
 
 CONTACT_STEPS = [
-    {"id": "contact_name",    "q": "👤 Ваше имя и фамилия?"},
-    {"id": "contact_role",    "q": "💼 Ваша должность?"},
-    {"id": "contact_company", "q": "🏢 Название компании?"},
-    {"id": "contact_country", "q": "🌐 Страна / регион?"},
-    {"id": "contact_email",   "q": "📧 Ваш email?"},
-    {"id": "contact_phone",   "q": "📱 Телефон или Telegram (@username)?"},
+    {"id": "contact_name",    "q": "Ваше имя и фамилия?"},
+    {"id": "contact_role",    "q": "Ваша должность?"},
+    {"id": "contact_company", "q": "Название компании?"},
+    {"id": "contact_country", "q": "Страна / регион?"},
+    {"id": "contact_email",   "q": "Ваш email?"},
+    {"id": "contact_phone",   "q": "Телефон или Telegram (@username)?"},
     {
         "id": "send_to_email",
-        "q": "📨 На какой email отправить бриф?\n\n"
-             "Введите свой email или email партнёра по внедрению.\n"
-             "Можно указать несколько через запятую.\n"
-             "Или /skip — бриф придёт только вам на почту из предыдущего шага.",
+        "q": "На какой email отправить бриф?\n\n"
+             "Введите свой email или email партнёра. "
+             "Можно несколько через запятую.\n"
+             "Или /skip — бриф придёт только вам.",
     },
     {
         "id": "contact_comment",
-        "q": "💬 Дополнительный контекст (необязательно)\n\n"
-             "Специфика процессов, интеграции с внешними системами, "
-             "особые требования. Или /skip чтобы пропустить.",
+        "q": "Дополнительный контекст (необязательно)\n\n"
+             "Специфика процессов, интеграции, особые требования. "
+             "Или /skip чтобы пропустить.",
     },
 ]
 
+# ── Статичная база ERP (fallback если KB не загружен) ────────────────────────
+
 ERP_DB: dict[str, dict] = {
-    "sap_s4_public": {
-        "name": "SAP S/4HANA Cloud, Public Edition",
-        "vendor": "SAP",
-        "deploy_types": ["cloud"],
-        "tco": "$$$$",
-        "url": "https://www.sap.com/products/erp/s4hana-cloud.html",
-        "community": "https://community.sap.com/t5/sap-s-4hana-cloud/ct-p/S4HANAcloud",
-        "strengths": ["Стандарт mid-market → enterprise", "Быстрый старт 3–6 мес (SAP Activate)", "Широкая экосистема партнёров", "Регулярные облачные обновления"],
-        "weaknesses": ["Ограниченная кастомизация", "Выше цена vs альтернативы", "Только Public Cloud"],
-        "industries": ["Нефть", "Производство", "Фарма", "Банки", "Дистрибуция", "Оптовая", "Энергет"],
-    },
-    "sap_s4_private": {
-        "name": "SAP S/4HANA Private / On-Premise",
-        "vendor": "SAP",
-        "deploy_types": ["onprem", "private"],
-        "tco": "$$$$$",
-        "url": "https://www.sap.com/products/erp/s4hana-private-cloud.html",
-        "community": "https://community.sap.com/t5/sap-s-4hana/ct-p/S4HANA",
-        "strengths": ["Максимальная кастомизация", "Полный контроль данных", "Отраслевые расширения IS-Oil/Mining", "Госсектор и оборонка"],
-        "weaknesses": ["Самый высокий TCO", "Внедрение 9–18 мес", "Требует большой IT-команды"],
-        "industries": ["Нефть", "Горнодоб", "Аэрокосмос", "Государств", "Производство процессное"],
-    },
-    "sap_b1": {
-        "name": "SAP Business One",
-        "vendor": "SAP",
-        "deploy_types": ["cloud", "onprem"],
-        "tco": "$$",
-        "url": "https://www.sap.com/products/erp/business-one.html",
-        "community": "https://community.sap.com/t5/sap-business-one/ct-p/businessone",
-        "strengths": ["Быстрый старт 1–3 мес", "Доступная цена", "Облако и on-prem"],
-        "weaknesses": ["Только малый бизнес", "Нет масштабирования до enterprise"],
-        "industries": ["Оптовая", "Дистрибуция", "Производство дискретное", "Ритейл"],
-    },
-    "oracle_fusion": {
-        "name": "Oracle Fusion Cloud ERP",
-        "vendor": "Oracle",
-        "deploy_types": ["cloud", "onprem"],
-        "tco": "$$$$$",
-        "url": "https://www.oracle.com/erp/",
-        "community": "https://community.oracle.com",
-        "strengths": ["Сильная финансовая функциональность", "AI встроен нативно", "Мультиюрисдикция"],
-        "weaknesses": ["Высокая стоимость", "Долгое внедрение", "Меньше партнёров чем у SAP"],
-        "industries": ["Банки", "Страхование", "Государств", "Телеком", "Энергет"],
-    },
-    "netsuite": {
-        "name": "Oracle NetSuite",
-        "vendor": "Oracle",
-        "deploy_types": ["cloud"],
-        "tco": "$$$",
-        "url": "https://www.netsuite.com",
-        "community": "https://community.netsuite.com",
-        "strengths": ["Нативный SaaS с 1998 г.", "Быстрый старт", "Мультивалюта / мультиентити", "Цена / функционал"],
-        "weaknesses": ["Слабее для производства", "Кастомизация через SuiteScript"],
-        "industries": ["Оптовая", "Дистрибуция", "Ритейл", "IT", "Стартапы"],
-    },
-    "dynamics": {
-        "name": "Microsoft Dynamics 365",
-        "vendor": "Microsoft",
-        "deploy_types": ["cloud", "hybrid"],
-        "tco": "$$$",
-        "url": "https://dynamics.microsoft.com",
-        "community": "https://community.dynamics.com",
-        "strengths": ["Интеграция M365 / Azure / Copilot AI", "Гибкая модульность", "Знакомый UI", "Hybrid возможен"],
-        "weaknesses": ["Запутанное лицензирование", "Производство слабее SAP"],
-        "industries": ["Производство дискретное", "Ритейл", "IT", "Дистрибуция", "Банки"],
-    },
-    "infor": {
-        "name": "Infor CloudSuite",
-        "vendor": "Infor",
-        "deploy_types": ["cloud", "onprem"],
-        "tco": "$$$$",
-        "url": "https://www.infor.com",
-        "community": "https://inforum.infor.com",
-        "strengths": ["Глубокая отраслевая специализация", "Лидер в здравоохранении и дистрибуции", "Аналитика Birst"],
-        "weaknesses": ["Меньше партнёров", "Менее известен в СНГ"],
-        "industries": ["Здравоохр", "Фарма", "Производство", "Дистрибуция", "Аэрокосмос"],
-    },
-    "epicor": {
-        "name": "Epicor Kinetic",
-        "vendor": "Epicor",
-        "deploy_types": ["cloud", "onprem"],
-        "tco": "$$$",
-        "url": "https://www.epicor.com/en/products/erp/kinetic/",
-        "community": "https://epicor.com/community",
-        "strengths": ["Специализация на производстве", "Гибкое развёртывание", "Отраслевые best practices"],
-        "weaknesses": ["Слабее вне производства", "Меньше глобальной сети"],
-        "industries": ["Производство дискретное", "Производство процессное", "Аэрокосмос"],
-    },
-    "acumatica": {
-        "name": "Acumatica Cloud ERP",
-        "vendor": "Acumatica",
-        "deploy_types": ["cloud", "onprem"],
-        "tco": "$$",
-        "url": "https://www.acumatica.com",
-        "community": "https://community.acumatica.com",
-        "strengths": ["Безлимитные пользователи — оплата за ресурсы", "Быстрое внедрение", "Современный UI"],
-        "weaknesses": ["Не для крупного enterprise", "Меньше отраслевых решений"],
-        "industries": ["Ритейл", "Дистрибуция", "Строительство", "IT"],
-    },
-    "odoo": {
-        "name": "Odoo (Community / Enterprise)",
-        "vendor": "Odoo",
-        "deploy_types": ["cloud", "onprem", "open"],
-        "tco": "$",
-        "url": "https://www.odoo.com",
-        "community": "https://www.odoo.com/forum",
-        "strengths": ["Open Source Community версия", "Самый низкий TCO", "Модульность — берёте только нужное"],
-        "weaknesses": ["Сложен для крупного бизнеса", "Требует разработчика для кастомизации"],
-        "industries": ["Стартапы", "IT", "Ритейл", "Дистрибуция", "Оптовая"],
-    },
-    "erpnext": {
-        "name": "ERPNext / Frappe",
-        "vendor": "Frappe",
-        "deploy_types": ["cloud", "onprem", "open"],
-        "tco": "$",
-        "url": "https://erpnext.com",
-        "community": "https://discuss.frappe.io",
-        "strengths": ["100% Open Source", "Нулевые лицензии", "Активное сообщество"],
-        "weaknesses": ["Требует Python-разработчика", "Слабее для сложного производства"],
-        "industries": ["Стартапы", "IT", "Дистрибуция", "Агробизнес"],
-    },
-    "ifs": {
-        "name": "IFS Cloud",
-        "vendor": "IFS",
-        "deploy_types": ["cloud", "onprem"],
-        "tco": "$$$$",
-        "url": "https://www.ifs.com",
-        "community": "https://community.ifs.com",
-        "strengths": ["Лидер для asset-intensive отраслей", "Сильный FSM (Field Service)", "Аэрокосмос и оборона"],
-        "weaknesses": ["Нишевый продукт", "Дорогой вне ключевых отраслей"],
-        "industries": ["Аэрокосмос", "Энергет", "Логистика", "Производство"],
-    },
+    "sap_s4_public":  {"name": "SAP S/4HANA Cloud, Public Edition",   "vendor": "SAP",       "deploy_types": ["cloud"],               "tco": "$$$$",  "url": "https://www.sap.com/products/erp/s4hana-cloud.html",         "community": "https://community.sap.com/t5/sap-s-4hana-cloud/ct-p/S4HANAcloud", "strengths": ["Стандарт mid-market → enterprise", "Быстрый старт 3–6 мес"], "weaknesses": ["Ограниченная кастомизация", "Выше цена vs альтернативы"], "industries": ["Нефть", "Производство", "Фарма", "Банки", "Дистрибуция", "Оптовая", "Энергет"]},
+    "sap_s4_private": {"name": "SAP S/4HANA Private / On-Premise",    "vendor": "SAP",       "deploy_types": ["onprem", "private"],   "tco": "$$$$$", "url": "https://www.sap.com/products/erp/s4hana-private-cloud.html",  "community": "https://community.sap.com/t5/sap-s-4hana/ct-p/S4HANA",           "strengths": ["Максимальная кастомизация", "Полный контроль данных"],        "weaknesses": ["Самый высокий TCO", "Внедрение 9–18 мес"],                  "industries": ["Нефть", "Горнодоб", "Аэрокосмос", "Государств", "Производство процессное"]},
+    "sap_b1":         {"name": "SAP Business One",                     "vendor": "SAP",       "deploy_types": ["cloud", "onprem"],     "tco": "$$",    "url": "https://www.sap.com/products/erp/business-one.html",         "community": "https://community.sap.com/t5/sap-business-one/ct-p/businessone","strengths": ["Быстрый старт 1–3 мес", "Доступная цена"],                   "weaknesses": ["Только малый бизнес"],                                       "industries": ["Оптовая", "Дистрибуция", "Производство дискретное", "Ритейл"]},
+    "oracle_fusion":  {"name": "Oracle Fusion Cloud ERP",              "vendor": "Oracle",    "deploy_types": ["cloud", "onprem"],     "tco": "$$$$$", "url": "https://www.oracle.com/erp/",                                "community": "https://community.oracle.com",                                     "strengths": ["Сильная финансовая функциональность", "AI встроен нативно"],  "weaknesses": ["Высокая стоимость", "Долгое внедрение"],                    "industries": ["Банки", "Страхование", "Государств", "Телеком", "Энергет"]},
+    "netsuite":       {"name": "Oracle NetSuite",                      "vendor": "Oracle",    "deploy_types": ["cloud"],               "tco": "$$$",   "url": "https://www.netsuite.com",                                   "community": "https://community.netsuite.com",                                   "strengths": ["Нативный SaaS", "Мультивалюта / мультиентити"],               "weaknesses": ["Слабее для производства", "Кастомизация через SuiteScript"], "industries": ["Оптовая", "Дистрибуция", "Ритейл", "IT", "Стартапы"]},
+    "dynamics":       {"name": "Microsoft Dynamics 365",               "vendor": "Microsoft", "deploy_types": ["cloud", "hybrid"],     "tco": "$$$",   "url": "https://dynamics.microsoft.com",                             "community": "https://community.dynamics.com",                                   "strengths": ["Интеграция M365 / Azure / Copilot AI", "Гибкая модульность"], "weaknesses": ["Запутанное лицензирование", "Производство слабее SAP"],     "industries": ["Производство дискретное", "Ритейл", "IT", "Дистрибуция", "Банки"]},
+    "infor":          {"name": "Infor CloudSuite",                     "vendor": "Infor",     "deploy_types": ["cloud", "onprem"],     "tco": "$$$$",  "url": "https://www.infor.com",                                      "community": "https://inforum.infor.com",                                        "strengths": ["Глубокая отраслевая специализация", "Лидер в здравоохранении"],"weaknesses": ["Меньше партнёров", "Менее известен в СНГ"],                 "industries": ["Здравоохр", "Фарма", "Производство", "Дистрибуция", "Аэрокосмос"]},
+    "epicor":         {"name": "Epicor Kinetic",                       "vendor": "Epicor",    "deploy_types": ["cloud", "onprem"],     "tco": "$$$",   "url": "https://www.epicor.com/en/products/erp/kinetic/",             "community": "https://epicor.com/community",                                     "strengths": ["Специализация на производстве", "Гибкое развёртывание"],     "weaknesses": ["Слабее вне производства"],                                   "industries": ["Производство дискретное", "Производство процессное", "Аэрокосмос"]},
+    "acumatica":      {"name": "Acumatica Cloud ERP",                  "vendor": "Acumatica", "deploy_types": ["cloud", "onprem"],     "tco": "$$",    "url": "https://www.acumatica.com",                                  "community": "https://community.acumatica.com",                                  "strengths": ["Безлимитные пользователи", "Современный UI"],                 "weaknesses": ["Не для крупного enterprise"],                                "industries": ["Ритейл", "Дистрибуция", "Строительство", "IT"]},
+    "odoo":           {"name": "Odoo (Community / Enterprise)",        "vendor": "Odoo",      "deploy_types": ["cloud", "onprem", "open"], "tco": "$",  "url": "https://www.odoo.com",                                       "community": "https://www.odoo.com/forum",                                       "strengths": ["Open Source Community версия", "Самый низкий TCO"],           "weaknesses": ["Сложен для крупного бизнеса", "Требует разработчика"],      "industries": ["Стартапы", "IT", "Ритейл", "Дистрибуция", "Оптовая"]},
+    "erpnext":        {"name": "ERPNext / Frappe",                     "vendor": "Frappe",    "deploy_types": ["cloud", "onprem", "open"], "tco": "$",  "url": "https://erpnext.com",                                        "community": "https://discuss.frappe.io",                                        "strengths": ["100% Open Source", "Нулевые лицензии"],                       "weaknesses": ["Требует Python-разработчика"],                               "industries": ["Стартапы", "IT", "Дистрибуция", "Агробизнес"]},
+    "ifs":            {"name": "IFS Cloud",                            "vendor": "IFS",       "deploy_types": ["cloud", "onprem"],     "tco": "$$$$",  "url": "https://www.ifs.com",                                        "community": "https://community.ifs.com",                                        "strengths": ["Лидер для asset-intensive отраслей", "Аэрокосмос и оборона"], "weaknesses": ["Нишевый продукт", "Дорогой вне ключевых отраслей"],         "industries": ["Аэрокосмос", "Энергет", "Логистика", "Производство"]},
 }
 
 TCO_LABELS = {
-    "$": "Низкий TCO",
-    "$$": "Ниже среднего",
-    "$$$": "Средний",
-    "$$$$": "Выше среднего",
-    "$$$$$": "Высокий",
+    "$": "Низкий TCO", "$$": "Ниже среднего", "$$$": "Средний",
+    "$$$$": "Выше среднего", "$$$$$": "Высокий",
 }
 
 BUDGET_SCORE_MAP = {
@@ -385,13 +393,14 @@ BUDGET_SCORE_MAP = {
     "Свыше $2M":     {"sap_s4_private": 18, "oracle_fusion": 18, "ifs": 15},
 }
 
+# ── Deploy filter ─────────────────────────────────────────────────────────────
 
 def _get_deploy_filter(ans: dict) -> str:
     dc = ans.get("datacenter", "")
-    if "Нет — предпочитаем облако" in dc:  return "cloud_only"
-    if "Private Cloud у вендора" in dc:    return "private_ok"
-    if "есть собственный" in dc or "построить" in dc: return "onprem_ok"
-    if "гибридная" in dc:                  return "hybrid_ok"
+    if "только облако" in dc:    return "cloud_only"
+    if "Private Cloud" in dc:    return "private_ok"
+    if "ЦОД и IT" in dc or "построить" in dc: return "onprem_ok"
+    if "гибридная" in dc:        return "hybrid_ok"
     return "any"
 
 
@@ -403,32 +412,74 @@ def _deploy_allowed(erp_key: str, deploy_filter: str) -> bool:
     if deploy_filter == "hybrid_ok":   return any(x in dt for x in ["cloud", "hybrid", "onprem"])
     return True
 
+# ── Скоринг ───────────────────────────────────────────────────────────────────
 
-def _budget_score(erp_key: str, budgets: list[str]) -> int:
-    max_s = 0
-    for b in budgets:
-        s = BUDGET_SCORE_MAP.get(b, {}).get(erp_key, 0)
-        if s > max_s:
-            max_s = s
-    return max_s
+def _integration_score(erp_key: str, selected_integrations: list[str]) -> int:
+    """Скор интеграций из KB. Уровень native=20, certified=12, ipaas=6, custom=2."""
+    level_bonus = {"native": 20, "certified": 12, "ipaas": 6, "custom": 2}
+    kb_integrations = _kb_integrations(erp_key)
+    score = 0
+    for intg_text in selected_integrations:
+        if intg_text == "Нет требований к интеграции":
+            continue
+        intg_key = INTEGRATION_KEY_MAP.get(intg_text)
+        if not intg_key:
+            continue
+        # Ищем запись в KB
+        kb_rec = next((x for x in kb_integrations if x["integration_key"] == intg_key), None)
+        if kb_rec:
+            score += kb_rec.get("score_bonus") or level_bonus.get(kb_rec.get("level", ""), 0)
+    return score
 
 
-def _team_score(erp_key: str, teams: list[str]) -> int:
-    teams_str = " ".join(teams)
-    has_experts = any(k in teams_str for k in ["ERP-архитектор", "SAP-сертифицир", "Разработчик"])
-    has_none = "Нет IT" in teams_str
-    heavy = ["sap_s4_private", "oracle_fusion", "ifs"]
-    light = ["sap_s4_public", "netsuite", "dynamics", "acumatica"]
-    if has_experts and erp_key in heavy:   return 12
-    if has_none and erp_key in heavy:      return -10
-    if has_none and erp_key in ["odoo", "erpnext"]: return -8
-    if has_none and erp_key in light:      return 8
+def _industry_score_from_kb(erp_key: str, industry_text: str) -> int:
+    """Бонус от отраслевых решений KB."""
+    ind_key = _industry_key(industry_text)
+    if not ind_key:
+        return 0
+    solutions = _kb_industry_solutions(erp_key, ind_key)
+    if solutions:
+        return max(s.get("score_bonus", 0) for s in solutions)
     return 0
+
+
+def _compliance_score(erp_key: str, audit: str) -> int:
+    """Compliance скор из KB."""
+    comp = _kb_compliance(erp_key)
+    if not comp:
+        # Fallback к статичной логике
+        ipo_systems = ["sap_s4_public", "sap_s4_private", "oracle_fusion", "dynamics", "netsuite", "infor", "ifs"]
+        open_src    = ["odoo", "erpnext"]
+        s = 0
+        if "IPO" in audit or "SOX" in audit or "Публичная" in audit:
+            if erp_key in ipo_systems: s += 25
+            if erp_key in open_src:    s -= 30
+        if "Big4" in audit or "аудит" in audit:
+            if erp_key in ipo_systems: s += 15
+            if erp_key in open_src:    s -= 15
+        if "Регуляторные" in audit:
+            if erp_key in ["sap_s4_public", "sap_s4_private", "oracle_fusion", "dynamics"]: s += 20
+        return s
+
+    s = 0
+    need_ipo    = any(k in audit for k in ["IPO", "SOX", "Публичная"])
+    need_audit  = any(k in audit for k in ["Big4", "аудит"])
+    need_regul  = "Регуляторные" in audit
+
+    if need_ipo:
+        if comp.get("ipo_ready") and comp.get("big4_approved"): s += 25
+        if comp.get("open_source_risk"):                         s -= 30
+    if need_audit:
+        if comp.get("big4_approved"):       s += 15
+        if comp.get("open_source_risk"):    s -= 15
+    if need_regul:
+        if comp.get("sox_compliant"):       s += 20
+    return s
 
 
 def _score(erp_key: str, ans: dict) -> int:
     s = 0
-    e = ERP_DB[erp_key]
+    e        = ERP_DB[erp_key]
     industry = ans.get("industry", "")
     size     = ans.get("size", "")
     dc       = ans.get("datacenter", "")
@@ -436,46 +487,53 @@ def _score(erp_key: str, ans: dict) -> int:
     areas    = ans.get("areas", [])
     current  = ans.get("current", "")
     timeline = ans.get("timeline", "")
+    audit    = ans.get("audit", "")
     budgets  = ans.get("budget", [])
     teams    = ans.get("has_team", [])
-    if isinstance(budgets, str): budgets = [budgets]
-    if isinstance(teams, str):   teams = [teams]
+    integrations = ans.get("integrations", [])
+    if isinstance(budgets, str):     budgets = [budgets]
+    if isinstance(teams, str):       teams = [teams]
+    if isinstance(integrations, str): integrations = [integrations]
 
-    # Industry
+    # 1. Базовый отраслевой скор (из ERP_DB)
     for ind in e["industries"]:
         if ind in industry:
             s += 30
             break
 
-    # Size
+    # 2. Отраслевой бонус из KB (отраслевые решения)
+    s += _industry_score_from_kb(erp_key, industry)
+
+    # 3. Размер компании
     is_small = "до 50" in size or "50–200" in size
     is_mid   = "200–1000" in size
-    is_large = "1000" in size or "10 000+" in size
+    is_large = "1000" in size or "10 000" in size or "Свыше 10 000" in size
     if is_small and erp_key in ["sap_b1", "odoo", "erpnext", "acumatica", "netsuite"]:  s += 22
     if is_mid   and erp_key in ["netsuite", "dynamics", "acumatica", "sap_s4_public", "epicor", "infor"]: s += 22
     if is_large and erp_key in ["sap_s4_public", "sap_s4_private", "oracle_fusion", "dynamics", "infor", "ifs"]: s += 22
 
-    # Budget
-    s += _budget_score(erp_key, budgets)
+    # 4. Бюджет
+    for b in budgets:
+        s += BUDGET_SCORE_MAP.get(b, {}).get(erp_key, 0)
 
-    # Datacenter / deploy
-    if "есть собственный" in dc or "построить" in dc:
+    # 5. Инфраструктура / ЦОД
+    if "ЦОД и IT" in dc or "построить" in dc:
         if erp_key in ["sap_s4_private", "oracle_fusion", "ifs", "infor"]: s += 25
-    if "Private Cloud у вендора" in dc:
+    if "Private Cloud" in dc:
         if erp_key in ["sap_s4_private", "oracle_fusion", "dynamics", "infor"]: s += 22
-    if "Нет — предпочитаем облако" in dc:
+    if "только облако" in dc:
         if erp_key in ["sap_s4_public", "netsuite", "dynamics", "acumatica", "odoo"]: s += 22
         if erp_key == "sap_s4_private": s -= 20
     if "гибридная" in dc:
         if erp_key in ["dynamics", "sap_s4_private", "epicor", "ifs"]: s += 15
 
-    # Timeline
+    # 6. Сроки
     if "До 3" in timeline   and erp_key in ["odoo", "sap_b1", "acumatica", "erpnext"]: s += 15
     if "3–6" in timeline    and erp_key in ["sap_s4_public", "netsuite", "dynamics", "acumatica"]: s += 15
     if "6–12" in timeline   and erp_key in ["sap_s4_private", "oracle_fusion", "infor", "ifs", "epicor"]: s += 15
-    if "12 мес" in timeline and erp_key in ["sap_s4_private", "oracle_fusion", "ifs"]: s += 15
+    if "12" in timeline     and erp_key in ["sap_s4_private", "oracle_fusion", "ifs"]: s += 15
 
-    # Priority
+    # 7. Приоритет
     if "отраслевой" in priority and erp_key in ["sap_s4_public", "sap_s4_private", "infor", "ifs", "epicor"]: s += 15
     if "Простота"   in priority and erp_key in ["odoo", "netsuite", "acumatica", "sap_b1"]: s += 15
     if "TCO"        in priority and erp_key in ["odoo", "erpnext", "acumatica", "sap_b1"]: s += 20
@@ -483,27 +541,40 @@ def _score(erp_key: str, ans: dict) -> int:
     if "Экосистема" in priority and erp_key in ["sap_s4_public", "dynamics", "netsuite"]: s += 15
     if "открытый"   in priority and erp_key in ["odoo", "erpnext"]: s += 30
 
-    # Current system migration bonus
+    # 8. Compliance из KB
+    s += _compliance_score(erp_key, audit)
+
+    # 9. Миграция с текущей системы
     if "SAP ECC" in current   and erp_key in ["sap_s4_public", "sap_s4_private"]: s += 25
-    if "Microsoft" in current and erp_key == "dynamics":  s += 20
-    if "Oracle" in current    and erp_key in ["oracle_fusion", "netsuite"]: s += 15
+    if "Microsoft" in current and erp_key == "dynamics":                           s += 20
+    if "Oracle" in current    and erp_key in ["oracle_fusion", "netsuite"]:        s += 15
 
-    # Functional areas
+    # 10. Функциональные области
     if "Производство / MES" in areas      and erp_key in ["sap_s4_public", "sap_s4_private", "epicor", "infor"]: s += 10
-    if "ESG" in " ".join(areas)           and erp_key in ["sap_s4_public", "sap_s4_private"]: s += 15
-    if "EAM" in " ".join(areas)           and erp_key in ["sap_s4_private", "ifs", "infor"]: s += 12
+    if "ESG" in " ".join(areas)            and erp_key in ["sap_s4_public", "sap_s4_private"]:                    s += 15
+    if "EAM" in " ".join(areas)            and erp_key in ["sap_s4_private", "ifs", "infor"]:                     s += 12
 
-    # Team
-    s += _team_score(erp_key, teams)
+    # 11. Интеграции из KB
+    s += _integration_score(erp_key, integrations)
+
+    # 12. Команда
+    teams_str = " ".join(teams)
+    has_experts = any(k in teams_str for k in ["ERP-архитектор", "SAP-сертифицир", "Разработчик"])
+    has_none    = "Нет команды" in teams_str
+    if has_experts and erp_key in ["sap_s4_private", "oracle_fusion", "ifs"]: s += 12
+    if has_none    and erp_key in ["sap_s4_private", "oracle_fusion", "ifs"]: s -= 10
+    if has_none    and erp_key in ["odoo", "erpnext"]:                        s -= 8
+    if has_none    and erp_key in ["sap_s4_public", "netsuite", "dynamics", "acumatica"]: s += 8
 
     return s
 
 
+# ── Top-3 ─────────────────────────────────────────────────────────────────────
+
 def get_top3(ans: dict) -> list[dict]:
-    """Возвращает Top-3 ERP с учётом фильтра деплоя и скоринга."""
     deploy_filter = _get_deploy_filter(ans)
-    candidates = [k for k in ERP_DB if _deploy_allowed(k, deploy_filter)]
-    scored = sorted(candidates, key=lambda k: _score(k, ans), reverse=True)
+    candidates    = [k for k in ERP_DB if _deploy_allowed(k, deploy_filter)]
+    scored        = sorted(candidates, key=lambda k: _score(k, ans), reverse=True)
 
     result: list[str] = []
     used_vendors: set[str] = set()
@@ -522,82 +593,150 @@ def get_top3(ans: dict) -> list[dict]:
 
 
 def get_visible_steps(ans: dict) -> list[dict]:
-    """Возвращает только те шаги, которые должны показываться клиенту."""
     return [s for s in STEPS if not s.get("conditional") or s["conditional"](ans)]
 
 
+# ── Форматирование вывода ─────────────────────────────────────────────────────
+
+def _get_industry_solution_tag(erp_key: str, industry_text: str) -> str | None:
+    """Возвращает строку с отраслевым решением если есть нативное."""
+    ind_key   = _industry_key(industry_text)
+    solutions = [x for x in _kb_industry_solutions(erp_key, ind_key) if x.get("is_native")]
+    if solutions:
+        sol = solutions[0]
+        return f"🏭 Отраслевое решение: [{sol['solution_name']}]({sol['solution_url']})"
+    return None
+
+
+def _get_integration_tags(erp_key: str, selected_integrations: list[str]) -> list[str]:
+    """Возвращает теги интеграций для карточки ERP."""
+    kb_ints = _kb_integrations(erp_key)
+    tags = []
+    level_icons = {"native": "✅", "certified": "🔗", "ipaas": "🔀", "custom": "⚙️"}
+    for intg_text in selected_integrations:
+        if intg_text == "Нет требований к интеграции":
+            continue
+        intg_key = INTEGRATION_KEY_MAP.get(intg_text)
+        if not intg_key:
+            continue
+        kb_rec = next((x for x in kb_ints if x["integration_key"] == intg_key), None)
+        if kb_rec:
+            icon  = level_icons.get(kb_rec.get("level", ""), "🔗")
+            short = intg_text.split(" (")[0]
+            tags.append(f"{icon} {short}")
+    return tags
+
+
 def format_top3_text(top3: list[dict], ans: dict) -> str:
-    """Форматирует Top-3 для отображения в Telegram."""
     deploy_filter = _get_deploy_filter(ans)
     filter_labels = {
-        "cloud_only": "☁️ Только облачные решения",
-        "private_ok": "🔒 Облако + Private Cloud",
-        "onprem_ok":  "🏢 Cloud + On-Premise доступны",
-        "hybrid_ok":  "🔀 Гибридная модель",
+        "cloud_only": "Только облачные решения",
+        "private_ok": "Облако + Private Cloud",
+        "onprem_ok":  "Cloud + On-Premise доступны",
+        "hybrid_ok":  "Гибридная модель",
         "any":        "Все варианты деплоя",
     }
-
     budgets = ans.get("budget", [])
     if isinstance(budgets, str): budgets = [budgets]
     budget_str = ", ".join(b for b in budgets if b != "Не готовы раскрывать") or "не указан"
+    industry   = ans.get("industry", "")
+    audit      = ans.get("audit", "")
+    integrations = ans.get("integrations", [])
+    if isinstance(integrations, str): integrations = [integrations]
+    need_ipo   = any(k in audit for k in ["IPO", "SOX", "Публичная", "Big4"])
 
     lines = [
-        f"🎯 *Фильтр деплоя:* {filter_labels[deploy_filter]}",
-        f"💰 *Бюджет:* {budget_str}",
+        f"*Деплой:* {filter_labels[deploy_filter]}  |  *Бюджет:* {budget_str}",
         "",
     ]
+
     medals = ["🥇", "🥈", "🥉"]
     labels = ["Лучший выбор", "Сильная альтернатива", "Выгодно по TCO"]
 
     for i, erp in enumerate(top3):
+        erp_key   = erp.get("key", "")
         tco_label = TCO_LABELS.get(erp["tco"], erp["tco"])
-        pros = " · ".join(erp["strengths"][:2])
-        lines += [
+        pros      = " · ".join(erp["strengths"][:2])
+
+        entry = [
             f"{medals[i]} *{labels[i]}*",
             f"*{erp['name']}* ({erp['vendor']})",
             f"TCO: {tco_label} ({erp['tco']}) | {erp['deploy_types'][0].upper()}",
             f"✅ {pros}",
-            f"🔗 [{erp['vendor']} / официальный сайт]({erp['url']})",
-            "",
         ]
 
-    lines.append(
+        # Отраслевое решение из KB
+        ind_tag = _get_industry_solution_tag(erp_key, industry)
+        if ind_tag:
+            entry.append(ind_tag)
+
+        # Compliance badge из KB
+        if need_ipo:
+            comp = _kb_compliance(erp_key)
+            if comp:
+                if comp.get("open_source_risk"):
+                    entry.append("⚠️ _Не рекомендуется для IPO — open source риск_")
+                elif comp.get("ipo_ready") and comp.get("big4_approved"):
+                    entry.append("✅ _Подходит для IPO и аудита Big4_")
+            else:
+                is_open = erp_key in ["odoo", "erpnext"]
+                entry.append(
+                    "⚠️ _Не рекомендуется для IPO (open source)_" if is_open
+                    else "✅ _Подходит для внешнего аудита и IPO_"
+                )
+
+        # Теги интеграций из KB
+        int_tags = _get_integration_tags(erp_key, integrations)
+        if int_tags:
+            entry.append("_Интеграции: " + " · ".join(int_tags) + "_")
+
+        entry += [f"🔗 [{erp['vendor']} / официальный сайт]({erp['url']})", ""]
+        lines += entry
+
+    lines += [
+        "━━━━━━━━━━━━━━━━━",
+        "💡 *Структура затрат на внедрение ERP:*",
+        "📄 Лицензии и подписки — стоимость ПО и пользователей",
+        "🖥 Железо и инфраструктура — серверы, ЦОД, сеть (для on-prem)",
+        "🤝 Услуги партнёра — внедрение, настройка, миграция, обучение",
+        "_Типичное соотношение: ~30% лицензии · ~20% железо · ~50% услуги_",
+        "",
         "_🧘 ERP Yoga Bot (@SAPyogaBOT) — независимый советник. "
         "Рекомендации основаны на официальных сайтах вендоров и аналитических источниках. "
         "Разработан сертифицированными экспертами. "
-        "Окончательный выбор уточняется после детального анализа требований._"
-    )
+        "Окончательный выбор уточняется после детального анализа требований._",
+    ]
     return "\n".join(lines)
 
 
-
 def build_plain_brief(ans: dict, top3: list[dict]) -> str:
-    """Текстовый бриф для ручного копирования и отправки вендору."""
     budgets = ans.get("budget", [])
-    if isinstance(budgets, str):
-        budgets = [budgets]
-    areas = ans.get("areas", [])
-    pains = ans.get("pain", [])
-    teams = ans.get("has_team", [])
-    if isinstance(teams, str):
-        teams = [teams]
+    if isinstance(budgets, str): budgets = [budgets]
+    areas  = ans.get("areas", [])
+    pains  = ans.get("pain", [])
+    teams  = ans.get("has_team", [])
+    integrations = ans.get("integrations", [])
+    if isinstance(teams, str):        teams = [teams]
+    if isinstance(integrations, str): integrations = [integrations]
     concerns = ans.get("partner_concerns", "")
-    if isinstance(concerns, list):
-        concerns = ", ".join(concerns)
+    if isinstance(concerns, list): concerns = ", ".join(concerns)
 
-    sep = "\n"
-    areas_str = (sep.join("  - " + a for a in areas)) if areas else "—"
-    pains_str = (sep.join("  - " + p for p in pains)) if pains else "—"
+    intg_list = [x for x in integrations if x != "Нет требований к интеграции"]
 
     erp_lines = []
     for i, e in enumerate(top3):
-        label = ["#1 Лучший выбор", "#2 Альтернатива", "#3 Выгодно по TCO"][i]
-        erp_lines.append(
-            label + ": " + e["name"] + " (" + e["vendor"] + ")"
-            + " | TCO: " + e["tco"]
-            + "\n    Сайт: " + e["url"]
-        )
+        erp_key = e.get("key", "")
+        label   = ["#1 Лучший выбор", "#2 Альтернатива", "#3 Выгодно по TCO"][i]
+        line    = label + ": " + e["name"] + " (" + e["vendor"] + ") | TCO: " + e["tco"]
+        # Добавляем отраслевое решение если есть
+        ind_tag = _get_industry_solution_tag(erp_key, ans.get("industry", ""))
+        if ind_tag:
+            sol_name = ind_tag.split(": [")[1].split("]")[0] if ": [" in ind_tag else ""
+            if sol_name: line += "\n    Отраслевое решение: " + sol_name
+        line += "\n    Сайт: " + e["url"]
+        erp_lines.append(line)
 
+    sep = "\n"
     parts = [
         "=== ERP YOGA BOT — ЗАПРОС НА ПОДБОР ERP ===",
         "",
@@ -608,19 +747,29 @@ def build_plain_brief(ans: dict, top3: list[dict]) -> str:
         "ЦОД / инфра:      " + ans.get("datacenter", "—"),
         "",
         "Функц. области:",
-        areas_str,
+        (sep.join("  - " + a for a in areas)) if areas else "  —",
+        "",
+        "Требования к интеграции:",
+        (sep.join("  - " + x for x in intg_list)) if intg_list else "  Нет особых требований",
         "",
         "Ключевые боли:",
-        pains_str,
+        (sep.join("  - " + p for p in pains)) if pains else "  —",
         "",
-        "Бюджет (год 1):   " + (", ".join(budgets) if budgets else "—"),
-        "Сроки:            " + ans.get("timeline", "—"),
-        "Приоритет:        " + ans.get("priority", "—"),
+        "Аудит / Compliance: " + ans.get("audit", "—"),
+        "Бюджет (год 1):     " + (", ".join(budgets) if budgets else "—"),
+        "Сроки:              " + ans.get("timeline", "—"),
+        "Приоритет:          " + ans.get("priority", "—"),
         "",
-        "IT-команда:       " + (", ".join(teams) if teams else "—"),
-        "Требования к партнёру: " + (concerns or "—"),
+        "IT-команда:              " + (", ".join(teams) if teams else "—"),
+        "Требования к партнёру:   " + (concerns or "—"),
         "",
     ] + erp_lines + [
+        "",
+        "СТРУКТУРА ЗАТРАТ НА ВНЕДРЕНИЕ ERP:",
+        "  1. Лицензии и подписки     — стоимость ПО, зависит от числа пользователей и модулей",
+        "  2. Железо и инфраструктура — серверы, ЦОД, сеть, резервное копирование (для on-prem)",
+        "  3. Услуги партнёра          — внедрение, настройка, миграция данных, обучение, поддержка",
+        "  Типичное соотношение: ~30% лицензии / ~20% железо / ~50% услуги партнёра",
         "",
         "Рекомендации: ERP Yoga Bot @SAPyogaBOT",
         "Источники: Официальные сайты вендоров.",

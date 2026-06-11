@@ -1,0 +1,1456 @@
+{
+  "meta": {
+    "version": "1.0",
+    "updated_at": "2025-Q2",
+    "sources": [
+      "sap.com",
+      "dynamics.microsoft.com",
+      "oracle.com",
+      "netsuite.com",
+      "infor.com",
+      "ifs.com",
+      "epicor.com",
+      "acumatica.com",
+      "odoo.com",
+      "erpnext.com",
+      "gartner.com",
+      "g2.com",
+      "panorama-consulting.com"
+    ],
+    "scraped_at": "2026-06-11"
+  },
+  "erp_systems": [
+    {
+      "id": "sap_s4_public",
+      "name": "SAP S/4HANA Cloud, Public Edition",
+      "vendor": "SAP",
+      "description": "Флагманская облачная ERP SAP для среднего и крупного бизнеса. Преднастроенные лучшие практики для быстрого старта по методологии SAP Activate. Работает на in-memory платформе HANA с нативным AI и аналитикой в реальном времени. Программа GROW with SAP — специально для компаний, впервые внедряющих SAP.",
+      "deploy_types": [
+        "cloud"
+      ],
+      "tco_tier": "$$$$",
+      "target_size": [
+        "mid",
+        "large",
+        "enterprise"
+      ],
+      "url_official": "https://www.sap.com/products/erp/s4hana-cloud.html",
+      "url_community": "https://community.sap.com/t5/sap-s-4hana-cloud/ct-p/S4HANAcloud",
+      "strengths": [
+        "Стандарт de-facto для mid-market и enterprise",
+        "Быстрый старт 3–6 мес по SAP Activate",
+        "Широчайшая экосистема партнёров и модулей",
+        "Встроенная аналитика HANA в реальном времени"
+      ],
+      "weaknesses": [
+        "Ограниченная кастомизация в Public Edition",
+        "Высокая стоимость лицензий",
+        "Зависимость от квартальных обновлений SAP"
+      ],
+      "industries": [
+        "oil_gas",
+        "manufacturing_discrete",
+        "manufacturing_process",
+        "pharma",
+        "banking",
+        "wholesale",
+        "retail",
+        "energy",
+        "telecom"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "SAP S/4HANA Cloud Public Edition — облачная ERP нового поколения на платформе HANA. Позволяет искать бизнес-данные через естественный язык в SAP Fiori Launchpad. Обеспечивает бесшовный персонализированный послепродажный опыт для удержания клиентов на любом канале с применением AI-технологий.",
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "sap_s4_private",
+      "name": "SAP S/4HANA Cloud, Private Edition / On-Premise",
+      "vendor": "SAP",
+      "description": "Максимально гибкая версия SAP S/4HANA для крупных организаций с уникальными процессами. Поддерживает глубокую кастомизацию, отраслевые расширения IS-Oil, IS-Mining, IS-Retail. Развёртывается в изолированном облаке у вендора или на собственных серверах клиента. Программа RISE with SAP для управляемой миграции.",
+      "deploy_types": [
+        "onprem",
+        "private"
+      ],
+      "tco_tier": "$$$$$",
+      "target_size": [
+        "large",
+        "enterprise"
+      ],
+      "url_official": "https://www.sap.com/products/erp/s4hana-private-cloud.html",
+      "url_community": "https://community.sap.com/t5/sap-s-4hana/ct-p/S4HANA",
+      "strengths": [
+        "Полная гибкость кастомизации и расширений",
+        "Полный контроль данных и инфраструктуры",
+        "Глубокие отраслевые решения IS-Oil, IS-Mining",
+        "Поддержка сложных холдинговых структур"
+      ],
+      "weaknesses": [
+        "Наивысший TCO среди всех ERP",
+        "Внедрение 9–18 месяцев",
+        "Требует большой внутренней IT-команды"
+      ],
+      "industries": [
+        "oil_gas",
+        "mining",
+        "aerospace",
+        "public_sector",
+        "manufacturing_process",
+        "chemicals",
+        "pharma"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "SAP S/4HANA Cloud Private Edition — управление облачной инфраструктурой, операциями, мониторингом и безопасностью в изолированной среде. Позволяет оцифровать бумажные процессы с помощью AI-технологий. Полный контроль над средой при управляемом сервисе от SAP.",
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "sap_b1",
+      "name": "SAP Business One",
+      "vendor": "SAP",
+      "description": "ERP-решение SAP для малого и среднего бизнеса с быстрым внедрением от 1 до 3 месяцев. Охватывает финансы, закупки, склад, продажи и базовое производство. Доступно как в облаке, так и на собственных серверах. Широкая партнёрская сеть в СНГ и мире.",
+      "deploy_types": [
+        "cloud",
+        "onprem"
+      ],
+      "tco_tier": "$$",
+      "target_size": [
+        "small",
+        "mid"
+      ],
+      "url_official": "https://www.sap.com/products/erp/business-one.html",
+      "url_community": "https://community.sap.com/t5/sap-business-one/ct-p/businessone",
+      "strengths": [
+        "Быстрое внедрение 1–3 месяца",
+        "Доступная стоимость для малого бизнеса",
+        "Поддержка и облака и on-premise",
+        "Большая сеть партнёров в СНГ"
+      ],
+      "weaknesses": [
+        "Не масштабируется для крупного enterprise",
+        "Ограниченная функциональность производства",
+        "Нет поддержки сложных холдингов"
+      ],
+      "industries": [
+        "wholesale",
+        "distribution",
+        "manufacturing_discrete",
+        "retail"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "SAP Business One — доступное ERP-решение для малого бизнеса, охватывающее бухгалтерию и финансы, закупки, склад, продажи и управление клиентскими отношениями, отчётность и аналитику. Обеспечивает прибыльный рост бизнеса через оптимизированные процессы, аналитику и стратегические решения на основе данных в реальном времени. Используется ведущими производственными компаниями и дистрибьюторами по всему миру.",
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "oracle_fusion",
+      "name": "Oracle Fusion Cloud ERP",
+      "vendor": "Oracle",
+      "description": "Комплексная облачная ERP Oracle для крупных организаций с акцентом на финансовое управление и мультиюрисдикционный учёт. Встроенный AI для автоматизации процессов, предиктивной аналитики и обнаружения аномалий. Сильнейшее решение для банков, страховых компаний и государственных структур.",
+      "deploy_types": [
+        "cloud",
+        "onprem"
+      ],
+      "tco_tier": "$$$$$",
+      "target_size": [
+        "large",
+        "enterprise"
+      ],
+      "url_official": "https://www.oracle.com/erp/",
+      "url_community": "https://community.oracle.com",
+      "strengths": [
+        "Лучший в классе финансовый модуль",
+        "Нативный AI и машинное обучение",
+        "Мультиюрисдикция и мультивалюта",
+        "Глубокая интеграция с Oracle DB и Analytics"
+      ],
+      "weaknesses": [
+        "Высокая стоимость лицензий и внедрения",
+        "Сложность настройки и администрирования",
+        "Меньшая экосистема партнёров чем у SAP"
+      ],
+      "industries": [
+        "banking",
+        "insurance",
+        "public_sector",
+        "telecom",
+        "energy",
+        "healthcare"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "Oracle Fusion Cloud ERP — полный современный облачный ERP-пакет с расширенными возможностями AI для автоматизации ручных процессов, аналитикой для реакции на изменения рынка в реальном времени и автоматическими обновлениями. Встроенные AI-агенты обеспечивают автономные операции для повышения эффективности и снижения затрат. Oracle Financials даёт полное представление о финансовом положении. ERP интегрирует бухгалтерию, закупки, управление проектами, риск-менеджмент и операции цепочки поставок в единую систему.",
+      "key_features_scraped": [
+        "AI-агенты для автономных финансовых операций",
+        "Аналитика в реальном времени",
+        "ERP для отраслей (ERP for Industries)",
+        "Миграция в облако (Migrate to Cloud)",
+        "Oracle AI for ERP",
+        "Connected Planning",
+        "Streamline B2B Transactions"
+      ],
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "netsuite",
+      "name": "Oracle NetSuite",
+      "vendor": "Oracle",
+      "description": "Первая нативная облачная ERP, работающая как SaaS с 1998 года. Идеальна для быстрорастущих компаний и холдингов с множеством юридических лиц. Встроенная поддержка мультивалюты, мультиентити и консолидации. Популярна среди IT-компаний, дистрибьюторов и ритейлеров.",
+      "deploy_types": [
+        "cloud"
+      ],
+      "tco_tier": "$$$",
+      "target_size": [
+        "small",
+        "mid",
+        "large"
+      ],
+      "url_official": "https://www.netsuite.com",
+      "url_community": "https://community.netsuite.com",
+      "strengths": [
+        "Нативный SaaS — нет инфраструктурных затрат",
+        "Мультиентити и мультивалюта из коробки",
+        "Быстрый старт для e-commerce и дистрибуции",
+        "Хорошее соотношение цена / функциональность"
+      ],
+      "weaknesses": [
+        "Слабее конкурентов в производственных модулях",
+        "Кастомизация через SuiteScript — требует разработчика",
+        "Ограниченные отраслевые решения"
+      ],
+      "industries": [
+        "wholesale",
+        "distribution",
+        "retail",
+        "it_services",
+        "startups"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "NetSuite ERP is an all-in-one, AI-powered cloud business management solution that helps organizations operate more effectively by automating core processes and providing real-time visibility into operational and financial performance. A single integrated suite for managing accounting, order processing, inventory, production, supply chain and warehouse operations. Gives companies clear visibility into their data and tighter control over their businesses. Trusted by more than 40,000 customers worldwide.",
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "dynamics",
+      "name": "Microsoft Dynamics 365",
+      "vendor": "Microsoft",
+      "description": "Модульная облачная ERP Microsoft, глубоко интегрированная с экосистемой Microsoft 365, Azure и Copilot AI. Позволяет начать с нужных модулей и расширять по мере роста. Copilot встроен нативно для автоматизации рутинных задач. Hybrid-развёртывание через Azure Arc.",
+      "deploy_types": [
+        "cloud",
+        "hybrid"
+      ],
+      "tco_tier": "$$$",
+      "target_size": [
+        "mid",
+        "large",
+        "enterprise"
+      ],
+      "url_official": "https://dynamics.microsoft.com",
+      "url_community": "https://community.dynamics.com",
+      "strengths": [
+        "Нативная интеграция с M365, Teams, Power BI, Copilot",
+        "Гибкая модульность — берёте только нужное",
+        "Знакомый интерфейс для пользователей Microsoft",
+        "Сильный партнёрский канал по всему миру"
+      ],
+      "weaknesses": [
+        "Запутанная система лицензирования",
+        "Производственный модуль слабее SAP",
+        "Затраты растут при добавлении модулей"
+      ],
+      "industries": [
+        "manufacturing_discrete",
+        "retail",
+        "it_services",
+        "distribution",
+        "banking",
+        "construction"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "Microsoft Dynamics 365 ERP — облачная платформа, объединяющая финансы, продажи, цепочку поставок и HR в единой AI-системе. Лидер IDC MarketScape 2025 в категории AI-Enabled Large Enterprise ERP Applications. Copilot AI встроен нативно для автоматизации процессов и принятия решений. Поддерживает производство, логистику, дистрибуцию, ритейл и автомобильную промышленность. Три ключевых ERP-продукта: Dynamics 365 Finance (enterprise), Business Central (SMB), Supply Chain Management (производство и склад).",
+      "key_features_scraped": [
+        "Dynamics 365 Finance — enterprise финансовое управление",
+        "Dynamics 365 Supply Chain Management",
+        "Dynamics 365 Customer Service",
+        "Dynamics 365 Project Operations",
+        "Нативная интеграция с Microsoft 365 и Azure",
+        "Copilot AI встроен во все приложения"
+      ],
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "infor",
+      "name": "Infor CloudSuite",
+      "vendor": "Infor",
+      "description": "Семейство отраслевых облачных ERP с глубокой специализацией по вертикалям. Infor CloudSuite Industrial (SyteLine) — лидер для производства, CloudSuite Healthcare — для медицины, CloudSuite Distribution — для дистрибуции. Аналитическая платформа Birst встроена нативно.",
+      "deploy_types": [
+        "cloud",
+        "onprem"
+      ],
+      "tco_tier": "$$$$",
+      "target_size": [
+        "mid",
+        "large",
+        "enterprise"
+      ],
+      "url_official": "https://www.infor.com",
+      "url_community": "https://inforum.infor.com",
+      "strengths": [
+        "Глубочайшая отраслевая специализация",
+        "Лидер в здравоохранении и дистрибуции",
+        "Встроенная аналитика Birst",
+        "Сильные решения для производства и склада"
+      ],
+      "weaknesses": [
+        "Менее известен в СНГ и Восточной Европе",
+        "Меньшая экосистема партнёров",
+        "Высокая стоимость отраслевых лицензий"
+      ],
+      "industries": [
+        "healthcare",
+        "pharma",
+        "manufacturing_discrete",
+        "manufacturing_process",
+        "distribution",
+        "aerospace",
+        "food_beverage"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "Infor CloudSuite Industrial Enterprise is the technology backbone to modernize manufacturing businesses. Boosts performance and efficiency in customer engagement, operations and supply chain. Provides industry best practices, emerging technology and consumable data within a smaller IT footprint. Case study: Harsco Rail transformed its business after 17 years on legacy systems by moving to CloudSuite Industrial Enterprise.",
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "epicor",
+      "name": "Epicor Kinetic",
+      "vendor": "Epicor",
+      "description": "ERP с фокусом на дискретное и процессное производство. Сильные модули управления производством (MES-интеграция), планирования мощностей и качества. Доступно как в облаке, так и on-premise. Используется преимущественно в промышленности и аэрокосмосе.",
+      "deploy_types": [
+        "cloud",
+        "onprem"
+      ],
+      "tco_tier": "$$$",
+      "target_size": [
+        "mid",
+        "large"
+      ],
+      "url_official": "https://www.epicor.com/en/products/erp/kinetic/",
+      "url_community": "https://epicor.com/community",
+      "strengths": [
+        "Специализация на производстве — лучшие производственные модули",
+        "Гибкое развёртывание cloud и on-prem",
+        "Отраслевые best practices для промышленности",
+        "Управление качеством и прослеживаемость"
+      ],
+      "weaknesses": [
+        "Слабее конкурентов вне производства",
+        "Меньшая глобальная партнёрская сеть",
+        "Ограниченные возможности для финансового сектора"
+      ],
+      "industries": [
+        "manufacturing_discrete",
+        "manufacturing_process",
+        "aerospace",
+        "automotive"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "Kinetic — глобальная облачная ERP для производителей с реальной бизнес-аналитикой и встроенными инструментами совместной работы. Epicor Prism Business Communications — первый в отрасли ERP AI-агент с ценообразованием на основе результатов: автоматизирует RFQ-процессы, сокращает цикл от запроса до заказа. Масштабируемое облачное решение на Microsoft Azure с IoT, AI, no-code/low-code настройкой. Сервисная архитектура поддерживает модульные обновления без простоя. Epicor Application Studio — среда персонализации без написания кода.",
+      "key_features_scraped": [
+        "Epicor Prism — AI-агент для RFQ с outcomes-based pricing",
+        "Epicor Advanced MES — управление производством",
+        "Epicor Automation Studio — автоматизация процессов",
+        "Epicor Data Fabric — интеграция данных",
+        "No-code/low-code Application Studio",
+        "Оптимизировано для Microsoft SQL и Azure",
+        "Data as a Service (DaaS)"
+      ],
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "acumatica",
+      "name": "Acumatica Cloud ERP",
+      "vendor": "Acumatica",
+      "description": "Облачная ERP с уникальной моделью ценообразования — оплата за вычислительные ресурсы, а не за количество пользователей. Современный UI и API-first архитектура. Популярна среди ритейлеров, дистрибьюторов и строительных компаний в США и СНГ.",
+      "deploy_types": [
+        "cloud",
+        "onprem"
+      ],
+      "tco_tier": "$$",
+      "target_size": [
+        "small",
+        "mid"
+      ],
+      "url_official": "https://www.acumatica.com",
+      "url_community": "https://community.acumatica.com",
+      "strengths": [
+        "Безлимитные пользователи — оплата за ресурсы",
+        "Современный UI и мобильный доступ",
+        "API-first — легко интегрируется",
+        "Быстрое внедрение для дистрибуции и ритейла"
+      ],
+      "weaknesses": [
+        "Ограниченная функциональность для крупного enterprise",
+        "Меньше отраслевых решений чем у конкурентов",
+        "Небольшая сеть партнёров вне США"
+      ],
+      "industries": [
+        "retail",
+        "distribution",
+        "construction",
+        "it_services"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "With real-time access to financials, reporting, CRM, and more, Acumatica's integrated business management solution was specifically designed to help small and mid-market businesses thrive in the digital economy. Supports multiple manufacturing methodologies: make-to-stock, make-to-order, engineer-to-order, project-centric, job shop, batch and repetitive manufacturing. Construction software tracks projects in real-time, eliminates costly delays, automates workflows and allows the whole team to log on anytime from anywhere. Intuitive wholesale distribution ERP with an extensive suite of connected applications.",
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "odoo",
+      "name": "Odoo",
+      "vendor": "Odoo",
+      "description": "Модульная ERP с открытым исходным кодом (Community Edition) и коммерческой Enterprise Edition. Уникальная архитектура — начинаете с нужных приложений и добавляете новые без смены платформы. Самый низкий TCO среди всех ERP при самостоятельном хостинге.",
+      "deploy_types": [
+        "cloud",
+        "onprem",
+        "open"
+      ],
+      "tco_tier": "$",
+      "target_size": [
+        "small",
+        "mid"
+      ],
+      "url_official": "https://www.odoo.com",
+      "url_community": "https://www.odoo.com/forum",
+      "strengths": [
+        "Open Source Community версия бесплатна",
+        "Самый низкий TCO при self-hosting",
+        "Модульность — берёте только нужное",
+        "Активное сообщество 12 000+ приложений"
+      ],
+      "weaknesses": [
+        "Open source — риск несанкционированных изменений кода",
+        "Не рекомендуется для IPO и аудита Big4",
+        "Требует Python-разработчика для кастомизации",
+        "Сложен для крупного enterprise"
+      ],
+      "industries": [
+        "startups",
+        "it_services",
+        "retail",
+        "wholesale",
+        "construction"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "Odoo — коллекция бизнес-приложений с установкой в один клик без сложности и затрат. Каждое приложение упрощает процесс и расширяет возможности команды с нативным AI. Все операции выполняются менее чем за 90ms. Сообщество 100k+ разработчиков по всему миру. Доступен в двух редакциях: Community (Open Source, полностью бесплатно) и Enterprise (дополнительные приложения, инфраструктура и профессиональные услуги). Включает бухгалтерию, продажи, склад, производство, HR, расчёт зарплаты и многое другое.",
+      "key_features_scraped": [
+        "Community Edition — 100% Open Source бесплатно",
+        "Enterprise Edition — расширенные приложения и поддержка",
+        "AI-автоматизация встроена нативно",
+        "Скорость операций менее 90ms",
+        "Сообщество 100k+ разработчиков",
+        "Odoo.sh — хостинг и кастомизация"
+      ],
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "erpnext",
+      "name": "ERPNext / Frappe",
+      "vendor": "Frappe",
+      "description": "100% открытый исходный код на фреймворке Frappe. Нулевые лицензионные затраты при самостоятельном развёртывании. Активное глобальное сообщество. Популярен среди стартапов, образовательных учреждений и агробизнеса. Хорошая поддержка МСФО.",
+      "deploy_types": [
+        "cloud",
+        "onprem",
+        "open"
+      ],
+      "tco_tier": "$",
+      "target_size": [
+        "small",
+        "mid"
+      ],
+      "url_official": "https://erpnext.com",
+      "url_community": "https://discuss.frappe.io",
+      "strengths": [
+        "100% Open Source — нулевые лицензии",
+        "Активное глобальное сообщество",
+        "Поддержка МСФО и мультивалюты",
+        "Быстрое развёртывание"
+      ],
+      "weaknesses": [
+        "Требует опытного Python-разработчика",
+        "Не рекомендуется для IPO и аудита Big4",
+        "Слабее для сложного дискретного производства",
+        "Ограниченная поддержка вендора"
+      ],
+      "industries": [
+        "startups",
+        "it_services",
+        "distribution",
+        "agro",
+        "education"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "ERPNext — 100% open-source ERP-система, современная и удобная альтернатива дорогостоящим SAP и Oracle NetSuite. Всё функциональность доступна без скрытых платежей — полная свобода использования, модификации и перепродажи. Охватывает бухгалтерию, выставление счетов, продажи, закупки, склад, производство, проекты, POS, HR, расчёт зарплаты. Работает из коробки для большинства отраслей и стран.",
+      "key_features_scraped": [
+        "Multi-subsidiary, Multi-currency",
+        "Accounts payable / receivable",
+        "Financial statements",
+        "Global tax and compliance",
+        "Procure-to-Pay cycle",
+        "Supplier scorecards",
+        "Multi-territory sales",
+        "Manufacturing и Production Planning"
+      ],
+      "scraped_at": "2026-06-11"
+    },
+    {
+      "id": "ifs",
+      "name": "IFS Cloud",
+      "vendor": "IFS",
+      "description": "ERP для asset-intensive отраслей — аэрокосмоса, обороны, энергетики и сервисных компаний. Лидер Gartner Magic Quadrant в Field Service Management. Сильнейшие модули управления активами (EAM), проектного учёта и обслуживания. Доступен в облаке и on-premise.",
+      "deploy_types": [
+        "cloud",
+        "onprem"
+      ],
+      "tco_tier": "$$$$",
+      "target_size": [
+        "mid",
+        "large",
+        "enterprise"
+      ],
+      "url_official": "https://www.ifs.com",
+      "url_community": "https://community.ifs.com",
+      "strengths": [
+        "Абсолютный лидер для asset-intensive отраслей",
+        "Лучший в классе FSM (Field Service Management)",
+        "Глубокая поддержка аэрокососа и оборонки",
+        "Сильный EAM и управление проектами"
+      ],
+      "weaknesses": [
+        "Нишевый продукт — слабее вне ключевых отраслей",
+        "Ограниченная партнёрская сеть",
+        "Высокая стоимость внедрения"
+      ],
+      "industries": [
+        "aerospace",
+        "energy",
+        "logistics",
+        "manufacturing_discrete",
+        "defense",
+        "field_service"
+      ],
+      "updated_at": "2025-06",
+      "description_scraped": "IFS Cloud объединяет активы, операции и сервис с Industrial AI, который предсказывает, оркестрирует и действует в потоке работы. Платформа охватывает ERP, EAM (управление активами), SCM и FSM (выездной сервис) в едином продукте. Forrester TEI-исследование подтвердило экономический эффект от внедрения IFS Cloud. Признан Customers' Choice в Gartner 2024 для Enterprise Asset Management. Composable-архитектура позволяет планировать умнее, адаптироваться быстрее и контролировать затраты. Специализация: asset-intensive и mission-critical отрасли.",
+      "key_features_scraped": [
+        "ERP + EAM + SCM + FSM в одном продукте",
+        "Industrial AI — предсказание, оркестровка, действие в реальном времени",
+        "Composable-архитектура без повторного внедрения",
+        "Forrester TEI: подтверждённый экономический эффект",
+        "Gartner Customers' Choice 2024 для EAM",
+        "Встроенные best practices и regulatory compliance",
+        "Purpose-built для asset-intensive отраслей"
+      ],
+      "scraped_at": "2026-06-11"
+    }
+  ],
+  "industry_solutions": [
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "oil_gas",
+      "solution_name": "SAP S/4HANA for Oil & Gas (IS-Oil)",
+      "solution_url": "https://www.sap.com/industries/oil-gas.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "oil_gas",
+      "solution_name": "SAP IS-Oil & Gas On-Premise",
+      "solution_url": "https://www.sap.com/industries/oil-gas.html",
+      "is_native": true,
+      "score_bonus": 30
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "mining",
+      "solution_name": "SAP IS-Mining",
+      "solution_url": "https://www.sap.com/industries/mining.html",
+      "is_native": true,
+      "score_bonus": 30
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "retail",
+      "solution_name": "SAP S/4HANA Retail & Fashion",
+      "solution_url": "https://www.sap.com/industries/retail.html",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "public_sector",
+      "solution_name": "SAP S/4HANA Public Sector",
+      "solution_url": "https://www.sap.com/industries/public-sector.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "public_sector",
+      "solution_name": "SAP S/4HANA Public Sector On-Prem",
+      "solution_url": "https://www.sap.com/industries/public-sector.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "healthcare",
+      "solution_name": "SAP S/4HANA Healthcare",
+      "solution_url": "https://www.sap.com/industries/healthcare.html",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "banking",
+      "solution_name": "SAP S/4HANA for Financial Services",
+      "solution_url": "https://www.sap.com/industries/banking.html",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "aerospace",
+      "solution_name": "SAP S/4HANA Aerospace & Defense",
+      "solution_url": "https://www.sap.com/industries/aerospace-defense.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "manufacturing_process",
+      "solution_name": "SAP S/4HANA for Chemicals",
+      "solution_url": "https://www.sap.com/industries/chemicals.html",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "banking",
+      "solution_name": "Oracle Fusion for Financial Services",
+      "solution_url": "https://www.oracle.com/financial-services/",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "public_sector",
+      "solution_name": "Oracle Fusion for Public Sector",
+      "solution_url": "https://www.oracle.com/industries/public-sector/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "healthcare",
+      "solution_name": "Oracle Health (Cerner)",
+      "solution_url": "https://www.oracle.com/health/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "healthcare",
+      "solution_name": "Infor CloudSuite Healthcare",
+      "solution_url": "https://www.infor.com/products/cloudsuite-healthcare",
+      "is_native": true,
+      "score_bonus": 30
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "distribution",
+      "solution_name": "Infor CloudSuite Distribution",
+      "solution_url": "https://www.infor.com/products/cloudsuite-distribution",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "Infor CloudSuite Industrial (SyteLine)",
+      "solution_url": "https://www.infor.com/products/syteline",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "aerospace",
+      "solution_name": "Infor CloudSuite Aerospace & Defense",
+      "solution_url": "https://www.infor.com/industries/aerospace-defense",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "food_beverage",
+      "solution_name": "Infor CloudSuite Food & Beverage",
+      "solution_url": "https://www.infor.com/industries/food-beverage",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "ifs",
+      "industry_key": "aerospace",
+      "solution_name": "IFS Cloud Aerospace & Defense",
+      "solution_url": "https://www.ifs.com/industries/aerospace-defense/",
+      "is_native": true,
+      "score_bonus": 30
+    },
+    {
+      "erp_id": "ifs",
+      "industry_key": "energy",
+      "solution_name": "IFS Cloud Energy & Utilities",
+      "solution_url": "https://www.ifs.com/industries/energy-utilities/",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "ifs",
+      "industry_key": "field_service",
+      "solution_name": "IFS Field Service Management",
+      "solution_url": "https://www.ifs.com/products/field-service-management/",
+      "is_native": true,
+      "score_bonus": 30
+    },
+    {
+      "erp_id": "epicor",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "Epicor Kinetic for Manufacturing",
+      "solution_url": "https://www.epicor.com/en/industries/manufacturing/",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "epicor",
+      "industry_key": "aerospace",
+      "solution_name": "Epicor Kinetic Aerospace & Defense",
+      "solution_url": "https://www.epicor.com/en/industries/aerospace-defense/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "retail",
+      "solution_name": "Microsoft Dynamics 365 Commerce",
+      "solution_url": "https://dynamics.microsoft.com/en-us/commerce/overview/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "Dynamics 365 Supply Chain Management",
+      "solution_url": "https://dynamics.microsoft.com/en-us/supply-chain-management/overview/",
+      "is_native": true,
+      "score_bonus": 20
+    }
+  ],
+  "integrations": [
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "bi_analytics",
+      "level": "native",
+      "tools": [
+        "SAP Analytics Cloud",
+        "SAP BW/4HANA"
+      ],
+      "notes": "SAP Analytics Cloud встроен нативно. Power BI через OData/REST.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "gov_portals",
+      "level": "certified",
+      "tools": [
+        "SAP Integration Suite",
+        "SAP BTP"
+      ],
+      "notes": "Сертифицированные коннекторы для госпорталов РФ, КЗ, ОАЭ.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "mes_wms_tms",
+      "level": "native",
+      "tools": [
+        "SAP Digital Manufacturing",
+        "SAP EWM",
+        "SAP TM"
+      ],
+      "notes": "Нативные MES, EWM и TM — лучшая поддержка в классе.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "banking",
+      "level": "certified",
+      "tools": [
+        "SAP Financial Services Network",
+        "SAP Integration Suite"
+      ],
+      "notes": "Сертифицированные банковские коннекторы.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "crm",
+      "level": "native",
+      "tools": [
+        "SAP Sales Cloud",
+        "SAP Service Cloud"
+      ],
+      "notes": "SAP Sales Cloud нативен. Salesforce через SAP Integration Suite.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "edo",
+      "level": "certified",
+      "tools": [
+        "SAP Document and Reporting Compliance",
+        "SAP Integration Suite"
+      ],
+      "notes": "Сертифицированные коннекторы для российских провайдеров ЭДО.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "hr_systems",
+      "level": "native",
+      "tools": [
+        "SAP SuccessFactors"
+      ],
+      "notes": "SAP SuccessFactors интегрируется нативно через SAP BTP.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "iot_scada",
+      "level": "ipaas",
+      "tools": [
+        "SAP IoT",
+        "SAP BTP",
+        "SAP Edge Services"
+      ],
+      "notes": "SAP IoT и Edge Services для OPC-UA и SCADA.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "integration_key": "ecommerce",
+      "level": "certified",
+      "tools": [
+        "SAP Commerce Cloud",
+        "SAP Integration Suite"
+      ],
+      "notes": "SAP Commerce Cloud нативен. Shopify/Ozon через партнёрские коннекторы.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "integration_key": "bi_analytics",
+      "level": "native",
+      "tools": [
+        "SAP Analytics Cloud",
+        "SAP BW/4HANA",
+        "SAP BusinessObjects"
+      ],
+      "notes": "Полный стек SAP BI.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "integration_key": "gov_portals",
+      "level": "native",
+      "tools": [
+        "SAP Integration Suite",
+        "SAP BTP",
+        "кастомные адаптеры"
+      ],
+      "notes": "Максимальная гибкость кастомной интеграции с госпорталами.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "integration_key": "mes_wms_tms",
+      "level": "native",
+      "tools": [
+        "SAP Digital Manufacturing",
+        "SAP EWM",
+        "SAP TM",
+        "SAP PP/MES"
+      ],
+      "notes": "Полный нативный стек производственных решений.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "integration_key": "iot_scada",
+      "level": "certified",
+      "tools": [
+        "SAP IoT",
+        "SAP Edge Services",
+        "OPC-UA адаптеры"
+      ],
+      "notes": "Глубокая интеграция с промышленными SCADA-системами.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "integration_key": "edo",
+      "level": "native",
+      "tools": [
+        "SAP Document Compliance",
+        "ЮЗЭДО",
+        "Диадок",
+        "СБИС"
+      ],
+      "notes": "Нативная поддержка российских ЭДО-операторов в локализованной версии.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "integration_key": "hr_systems",
+      "level": "native",
+      "tools": [
+        "SAP SuccessFactors",
+        "SAP HCM",
+        "1С:ЗУП через адаптер"
+      ],
+      "notes": "Нативный SAP HCM и SuccessFactors.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "bi_analytics",
+      "level": "native",
+      "tools": [
+        "Microsoft Power BI",
+        "Azure Synapse",
+        "Fabric"
+      ],
+      "notes": "Power BI встроен нативно — лучшая интеграция в классе.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "gov_portals",
+      "level": "ipaas",
+      "tools": [
+        "Azure Integration Services",
+        "Azure API Management"
+      ],
+      "notes": "Через Azure Integration Services и Logic Apps.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "crm",
+      "level": "native",
+      "tools": [
+        "Dynamics 365 Sales",
+        "Dynamics 365 Customer Service"
+      ],
+      "notes": "CRM — нативная часть Dynamics 365.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "hr_systems",
+      "level": "native",
+      "tools": [
+        "Dynamics 365 HR",
+        "Azure AD"
+      ],
+      "notes": "Dynamics 365 HR — нативный модуль.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "ecommerce",
+      "level": "certified",
+      "tools": [
+        "Dynamics 365 Commerce",
+        "Shopify connector"
+      ],
+      "notes": "D365 Commerce нативен, Shopify через сертифицированный коннектор.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "banking",
+      "level": "ipaas",
+      "tools": [
+        "Azure Integration Services",
+        "банковские коннекторы"
+      ],
+      "notes": "Через Azure Integration Services.",
+      "score_bonus": 10
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "mes_wms_tms",
+      "level": "certified",
+      "tools": [
+        "D365 Supply Chain Management",
+        "партнёрские WMS/MES"
+      ],
+      "notes": "D365 SCM + партнёрские MES-коннекторы.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "dynamics",
+      "integration_key": "iot_scada",
+      "level": "ipaas",
+      "tools": [
+        "Azure IoT Hub",
+        "Azure Digital Twins"
+      ],
+      "notes": "Azure IoT Hub для промышленных данных.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "integration_key": "bi_analytics",
+      "level": "native",
+      "tools": [
+        "Oracle Analytics Cloud",
+        "Oracle BI"
+      ],
+      "notes": "Oracle Analytics Cloud встроен нативно.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "integration_key": "banking",
+      "level": "native",
+      "tools": [
+        "Oracle FLEXCUBE",
+        "Oracle Financial Services"
+      ],
+      "notes": "Нативная банковская функциональность.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "integration_key": "gov_portals",
+      "level": "certified",
+      "tools": [
+        "Oracle Integration Cloud",
+        "OIC"
+      ],
+      "notes": "Oracle Integration Cloud для госинтеграций.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "integration_key": "crm",
+      "level": "native",
+      "tools": [
+        "Oracle CX Sales",
+        "Oracle Service"
+      ],
+      "notes": "Oracle CX — нативная CRM-платформа.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "netsuite",
+      "integration_key": "bi_analytics",
+      "level": "ipaas",
+      "tools": [
+        "SuiteAnalytics",
+        "Tableau",
+        "Power BI через REST API"
+      ],
+      "notes": "SuiteAnalytics встроен, внешние BI через REST.",
+      "score_bonus": 10
+    },
+    {
+      "erp_id": "netsuite",
+      "integration_key": "ecommerce",
+      "level": "certified",
+      "tools": [
+        "Shopify",
+        "Magento",
+        "SuiteCommerce"
+      ],
+      "notes": "SuiteCommerce нативен. Shopify — сертифицированный коннектор.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "netsuite",
+      "integration_key": "crm",
+      "level": "native",
+      "tools": [
+        "NetSuite CRM",
+        "Salesforce via SuiteApp"
+      ],
+      "notes": "NetSuite CRM нативен. Salesforce через SuiteApp.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "infor",
+      "integration_key": "bi_analytics",
+      "level": "native",
+      "tools": [
+        "Infor Birst",
+        "Infor OS"
+      ],
+      "notes": "Birst встроен нативно в CloudSuite.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "infor",
+      "integration_key": "mes_wms_tms",
+      "level": "native",
+      "tools": [
+        "Infor WMS",
+        "Infor SCM",
+        "Infor Factory Track"
+      ],
+      "notes": "Нативные WMS и производственные модули.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "infor",
+      "integration_key": "iot_scada",
+      "level": "certified",
+      "tools": [
+        "Infor Coleman AI",
+        "IoT коннекторы"
+      ],
+      "notes": "Сертифицированные IoT-интеграции для промышленности.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "infor",
+      "integration_key": "hr_systems",
+      "level": "native",
+      "tools": [
+        "Infor HCM"
+      ],
+      "notes": "Infor HCM нативно интегрирован в CloudSuite.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "ifs",
+      "integration_key": "mes_wms_tms",
+      "level": "native",
+      "tools": [
+        "IFS Manufacturing",
+        "IFS Warehouse Management"
+      ],
+      "notes": "Нативные производственные и складские модули.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "ifs",
+      "integration_key": "iot_scada",
+      "level": "certified",
+      "tools": [
+        "IFS IoT Business Connector",
+        "OPC-UA"
+      ],
+      "notes": "IFS IoT Business Connector для SCADA и OPC-UA.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "ifs",
+      "integration_key": "bi_analytics",
+      "level": "certified",
+      "tools": [
+        "IFS Analytics",
+        "Power BI"
+      ],
+      "notes": "IFS Analytics + Power BI через сертифицированный коннектор.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "epicor",
+      "integration_key": "mes_wms_tms",
+      "level": "native",
+      "tools": [
+        "Epicor Advanced MES",
+        "Epicor WMS"
+      ],
+      "notes": "Нативные MES и WMS модули.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "epicor",
+      "integration_key": "iot_scada",
+      "level": "ipaas",
+      "tools": [
+        "Epicor IoT",
+        "OPC-UA через партнёрские коннекторы"
+      ],
+      "notes": "IoT-интеграция через Epicor IoT и партнёров.",
+      "score_bonus": 10
+    },
+    {
+      "erp_id": "epicor",
+      "integration_key": "bi_analytics",
+      "level": "certified",
+      "tools": [
+        "Epicor Data Analytics",
+        "Power BI"
+      ],
+      "notes": "Power BI — сертифицированный коннектор.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "acumatica",
+      "integration_key": "ecommerce",
+      "level": "native",
+      "tools": [
+        "Acumatica Commerce Edition",
+        "Shopify"
+      ],
+      "notes": "Нативный Shopify коннектор — один из лучших в классе.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "acumatica",
+      "integration_key": "bi_analytics",
+      "level": "certified",
+      "tools": [
+        "Power BI",
+        "Tableau"
+      ],
+      "notes": "Сертифицированные коннекторы для BI.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "acumatica",
+      "integration_key": "crm",
+      "level": "certified",
+      "tools": [
+        "Salesforce",
+        "HubSpot",
+        "встроенный CRM"
+      ],
+      "notes": "Встроенный CRM + сертифицированные коннекторы.",
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "odoo",
+      "integration_key": "ecommerce",
+      "level": "native",
+      "tools": [
+        "Odoo eCommerce",
+        "WooCommerce",
+        "Shopify"
+      ],
+      "notes": "Нативный e-commerce модуль и маркетплейс-коннекторы.",
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "odoo",
+      "integration_key": "crm",
+      "level": "native",
+      "tools": [
+        "Odoo CRM"
+      ],
+      "notes": "CRM — нативный модуль Odoo.",
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "odoo",
+      "integration_key": "bi_analytics",
+      "level": "ipaas",
+      "tools": [
+        "Odoo Reporting",
+        "Power BI через REST"
+      ],
+      "notes": "Встроенные отчёты + Power BI через REST API.",
+      "score_bonus": 8
+    },
+    {
+      "erp_id": "odoo",
+      "integration_key": "edo",
+      "level": "custom",
+      "tools": [
+        "кастомные модули"
+      ],
+      "notes": "Интеграция с ЭДО только через кастомную разработку.",
+      "score_bonus": 2
+    },
+    {
+      "erp_id": "odoo",
+      "integration_key": "gov_portals",
+      "level": "custom",
+      "tools": [
+        "кастомные REST-интеграции"
+      ],
+      "notes": "Требует разработки — нет готовых коннекторов для госпорталов.",
+      "score_bonus": 2
+    },
+    {
+      "erp_id": "erpnext",
+      "integration_key": "ecommerce",
+      "level": "ipaas",
+      "tools": [
+        "Frappe Commerce",
+        "WooCommerce через плагин"
+      ],
+      "notes": "Базовый e-commerce + сторонние плагины.",
+      "score_bonus": 8
+    },
+    {
+      "erp_id": "erpnext",
+      "integration_key": "bi_analytics",
+      "level": "ipaas",
+      "tools": [
+        "Frappe Insights",
+        "Metabase",
+        "Power BI через REST"
+      ],
+      "notes": "Frappe Insights + внешние BI через REST.",
+      "score_bonus": 8
+    },
+    {
+      "erp_id": "erpnext",
+      "integration_key": "gov_portals",
+      "level": "custom",
+      "tools": [
+        "кастомные REST-интеграции"
+      ],
+      "notes": "Только кастомная разработка.",
+      "score_bonus": 2
+    },
+    {
+      "erp_id": "erpnext",
+      "integration_key": "edo",
+      "level": "custom",
+      "tools": [
+        "кастомные модули"
+      ],
+      "notes": "Интеграция с ЭДО только через кастомную разработку.",
+      "score_bonus": 2
+    }
+  ],
+  "compliance": [
+    {
+      "erp_id": "sap_s4_public",
+      "ipo_ready": true,
+      "sox_compliant": true,
+      "ifrs_support": true,
+      "big4_approved": true,
+      "audit_trail": "immutable",
+      "open_source_risk": false,
+      "notes": "Признаётся всеми Big4. Встроенный immutable audit trail. Сертифицирован для SOX, МСФО, GAAP."
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "ipo_ready": true,
+      "sox_compliant": true,
+      "ifrs_support": true,
+      "big4_approved": true,
+      "audit_trail": "immutable",
+      "open_source_risk": false,
+      "notes": "Максимальный уровень compliance. Используется публичными компаниями на NYSE, LSE, MOEX."
+    },
+    {
+      "erp_id": "sap_b1",
+      "ipo_ready": false,
+      "sox_compliant": false,
+      "ifrs_support": true,
+      "big4_approved": false,
+      "audit_trail": "configurable",
+      "open_source_risk": false,
+      "notes": "МСФО поддерживается. Не рекомендуется для IPO — ограниченный audit trail."
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "ipo_ready": true,
+      "sox_compliant": true,
+      "ifrs_support": true,
+      "big4_approved": true,
+      "audit_trail": "immutable",
+      "open_source_risk": false,
+      "notes": "Полный SOX и МСФО. Используется крупнейшими банками и публичными компаниями."
+    },
+    {
+      "erp_id": "netsuite",
+      "ipo_ready": true,
+      "sox_compliant": true,
+      "ifrs_support": true,
+      "big4_approved": true,
+      "audit_trail": "immutable",
+      "open_source_risk": false,
+      "notes": "SOX-compliant. Широко используется pre-IPO компаниями в США."
+    },
+    {
+      "erp_id": "dynamics",
+      "ipo_ready": true,
+      "sox_compliant": true,
+      "ifrs_support": true,
+      "big4_approved": true,
+      "audit_trail": "immutable",
+      "open_source_risk": false,
+      "notes": "Полный SOX и МСФО. Признаётся Big4 для публичных компаний."
+    },
+    {
+      "erp_id": "infor",
+      "ipo_ready": true,
+      "sox_compliant": true,
+      "ifrs_support": true,
+      "big4_approved": true,
+      "audit_trail": "immutable",
+      "open_source_risk": false,
+      "notes": "Полный compliance для отраслевых клиентов. Используется публичными компаниями."
+    },
+    {
+      "erp_id": "epicor",
+      "ipo_ready": false,
+      "sox_compliant": false,
+      "ifrs_support": true,
+      "big4_approved": false,
+      "audit_trail": "configurable",
+      "open_source_risk": false,
+      "notes": "МСФО поддерживается. SOX возможен через настройки, но не является основным позиционированием."
+    },
+    {
+      "erp_id": "acumatica",
+      "ipo_ready": false,
+      "sox_compliant": false,
+      "ifrs_support": true,
+      "big4_approved": false,
+      "audit_trail": "configurable",
+      "open_source_risk": false,
+      "notes": "МСФО поддерживается. Не позиционируется для IPO-компаний."
+    },
+    {
+      "erp_id": "odoo",
+      "ipo_ready": false,
+      "sox_compliant": false,
+      "ifrs_support": false,
+      "big4_approved": false,
+      "audit_trail": "limited",
+      "open_source_risk": true,
+      "notes": "Open Source — возможность модификации кода создаёт риск нарушения audit trail. Не принимается Big4 для аудита публичных компаний."
+    },
+    {
+      "erp_id": "erpnext",
+      "ipo_ready": false,
+      "sox_compliant": false,
+      "ifrs_support": true,
+      "big4_approved": false,
+      "audit_trail": "limited",
+      "open_source_risk": true,
+      "notes": "Open Source риски аналогичны Odoo. МСФО формально поддерживается, но audit trail ограничен."
+    },
+    {
+      "erp_id": "ifs",
+      "ipo_ready": true,
+      "sox_compliant": true,
+      "ifrs_support": true,
+      "big4_approved": true,
+      "audit_trail": "immutable",
+      "open_source_risk": false,
+      "notes": "Полный compliance для asset-intensive отраслей. Используется публичными компаниями в аэрокососе и энергетике."
+    }
+  ]
+}
