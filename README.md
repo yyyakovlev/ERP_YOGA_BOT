@@ -21,7 +21,7 @@
 | Система | Вендор | Деплой | TCO |
 |---|---|---|---|
 | SAP S/4HANA Cloud, Public Edition | SAP | Cloud | $$$$ |
-| SAP S/4HANA Cloud, Private Edition / On-Prem | SAP | Cloud / On-Prem / Private | $$$$$ |
+| SAP S/4HANA Cloud, Private Edition / On-Prem | SAP | Cloud / On-Prem | $$$$$ |
 | SAP Business One | SAP | Cloud / On-Prem | $$ |
 | Oracle Fusion Cloud ERP | Oracle | Cloud / On-Prem | $$$$$ |
 | Oracle NetSuite | Oracle | Cloud | $$$ |
@@ -32,17 +32,6 @@
 | Odoo | Odoo | Cloud / On-Prem / Open | $ |
 | ERPNext / Frappe | Frappe | Cloud / On-Prem / Open | $ |
 | IFS Cloud | IFS | Cloud / On-Prem | $$$$ |
-
----
-
-## База знаний (knowledge_base.json)
-
-| Раздел | Записей | Что содержит |
-|---|---|---|
-| `erp_systems` | 12 | Описание, TCO, деплой, strengths/weaknesses |
-| `industry_solutions` | **94** | Отраслевые решения вендоров с score_bonus |
-| `integrations` | 52 | Уровни интеграций: native / certified / ipaas / custom |
-| `compliance` | 12 | IPO, SOX, IFRS, Big4, audit_trail, open_source_risk |
 
 ---
 
@@ -87,105 +76,6 @@
 | 16 | Главный приоритет | single |
 | 17 | Внутренняя IT-команда | single |
 | 18 | Требования к партнёру | multi |
-
----
-
-## Структура проекта
-
-```
-ERP_YOGA_BOT/
-├── bot.py                 — FSM, хэндлеры, Telegram polling, retry
-├── data.py                — анкета, KB-скоринг, локализация, форматирование
-├── ai_service.py          — Claude API + web_search, поиск партнёров
-├── email_service.py       — HTML-бриф + Resend (резерв)
-├── knowledge_base.json    — база знаний: 12 ERP, 94 отраслевых, 52 интеграции
-├── scraper_products.py    — HTTP-парсер (NetSuite, Infor, Acumatica...)
-├── scraper_playwright.py  — браузерный парсер (SAP, Oracle, Microsoft, IFS...)
-├── requirements.txt
-├── Dockerfile
-├── .env.example
-└── DEPLOY.md              — полная инструкция по деплою с bash-командами
-```
-
----
-
-## Поток пользователя
-
-```
-/start
-  └── Анкета 17 вопросов (inline-кнопки, мобильный UX)
-        └── Top-3 ERP в чат
-              ├── 🏭 Отраслевое решение вендора
-              ├── ✅ / ⚠️ Локализация по стране
-              ├── ✅ / ⚠️ IPO / Big4 compliance
-              ├── 📋 Скопировать бриф
-              ├── 🌍 Найти партнёров в регионе → Claude web_search
-              └── 🔄 Пройти заново
-```
-
----
-
-## Быстрый старт
-
-```bash
-git clone https://github.com/yyyakovlev/ERP_YOGA_BOT
-cd ERP_YOGA_BOT
-pip install -r requirements.txt
-cp .env.example .env   # заполни переменные
-python bot.py
-```
-
----
-
-## Переменные окружения
-
-| Переменная | Где взять | Статус |
-|---|---|---|
-| `TELEGRAM_BOT_TOKEN` | @BotFather → /newbot | обязательно |
-| `ANTHROPIC_API_KEY` | console.anthropic.com → API Keys | обязательно |
-| `RESEND_API_KEY` | resend.com → API Keys | обязательно |
-| `RESEND_FROM_EMAIL` | верифицированный домен или `onboarding@resend.dev` | обязательно |
-| `MANAGER_TELEGRAM_ID` | @userinfobot | рекомендуется |
-| `MANAGER_EMAIL` | твой email — BCC брифов | опционально |
-
----
-
-## Деплой на Railway
-
-```bash
-# 1. Push в репо → Railway собирает автоматически
-git add . && git commit -m "update" && git push
-
-# 2. Логи
-railway logs --follow
-
-# Ожидаемый старт:
-# 🧘 ERP Yoga Bot (@SAPyogaBOT) запускается...
-# KB loaded: 12 systems, 94 industry solutions, 52 integrations
-# Run polling for bot @ERP_YOGA_BOT
-```
-
----
-
-## Обновление базы знаний (раз в квартал)
-
-```bash
-# Запускать ЛОКАЛЬНО — серверные IP блокируются вендорами
-
-# HTTP-парсер (без Cloudflare)
-pip install httpx beautifulsoup4
-python scraper_products.py
-
-# Браузерный парсер (SAP, Oracle, Microsoft, IFS, Epicor, Odoo)
-pip install playwright && playwright install chromium
-python scraper_playwright.py
-
-# Проверить diff и закоммитить
-git diff knowledge_base.json
-git add knowledge_base.json
-git commit -m "chore: quarterly KB update $(date +%Y-%m)"
-git push   # → Railway автоматически перезапустит с новой базой
-```
 
 ---
 
