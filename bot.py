@@ -72,8 +72,14 @@ def _opts_kbd(opts: list[str], q_type: str, selected: list[str],
     if nav:
         rows.append(nav)
 
+    # Кнопка "← Назад" — со второго вопроса
+    bottom = []
+    if step_idx > 0:
+        bottom.append(InlineKeyboardButton(text="← Назад", callback_data="back"))
     if q_type == "multi":
-        rows.append([InlineKeyboardButton(text="✔️ Готово", callback_data="done")])
+        bottom.append(InlineKeyboardButton(text="✔️ Готово", callback_data="done"))
+    if bottom:
+        rows.append(bottom)
 
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -195,6 +201,29 @@ async def cb_opt(cb: CallbackQuery, state: FSMContext) -> None:
         await state.update_data(answers=answers)
         await _render_step(cb.message, state, edit=True)
 
+
+
+@dp.callback_query(Survey.question, F.data == "back")
+async def cb_back(cb: CallbackQuery, state: FSMContext) -> None:
+    await cb.answer()
+    data    = await state.get_data()
+    answers = data.get("answers", {})
+    idx     = data.get("step", 0)
+
+    if idx <= 0:
+        return  # уже на первом вопросе
+
+    # Шагаем назад с учётом visible steps
+    new_idx = idx - 1
+    visible = get_visible_steps(answers)
+
+    # Очищаем ответ на текущий шаг (чтобы вернуться чистым)
+    current_step = visible[idx] if idx < len(visible) else None
+    if current_step and current_step["id"] in answers:
+        del answers[current_step["id"]]
+
+    await state.update_data(step=new_idx, answers=answers, page=0)
+    await _render_step(cb.message, state, edit=True)
 
 @dp.callback_query(Survey.question, F.data == "done")
 async def cb_done(cb: CallbackQuery, state: FSMContext) -> None:
