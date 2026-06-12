@@ -745,6 +745,558 @@
       "solution_url": "https://dynamics.microsoft.com/en-us/supply-chain-management/overview/",
       "is_native": true,
       "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "food_beverage",
+      "solution_name": "SAP S/4HANA for Agriculture & Farm Management",
+      "solution_url": "https://www.sap.com/industries/agriculture.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "food_beverage",
+      "solution_name": "SAP Farm Management (SAP S/4HANA On-Prem)",
+      "solution_url": "https://www.sap.com/industries/agriculture.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "food_beverage",
+      "solution_name": "Microsoft Dynamics 365 for Food & Beverage",
+      "solution_url": "https://dynamics.microsoft.com/en-us/industries/discrete-manufacturing/",
+      "is_native": false,
+      "score_bonus": 15
+    },
+    {
+      "erp_id": "erpnext",
+      "industry_key": "food_beverage",
+      "solution_name": "ERPNext Agriculture Module",
+      "solution_url": "https://erpnext.com/modules/agriculture",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "odoo",
+      "industry_key": "food_beverage",
+      "solution_name": "Odoo Manufacturing & Food Industry",
+      "solution_url": "https://www.odoo.com/app/manufacturing",
+      "is_native": false,
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "mining",
+      "solution_name": "SAP S/4HANA for Mining",
+      "solution_url": "https://www.sap.com/industries/mining.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "aerospace",
+      "solution_name": "SAP S/4HANA Aerospace & Defense",
+      "solution_url": "https://www.sap.com/industries/aerospace-defense.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "SAP S/4HANA Manufacturing",
+      "solution_url": "https://www.sap.com/industries/manufacturing.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "chemicals",
+      "solution_name": "SAP S/4HANA for Chemicals",
+      "solution_url": "https://www.sap.com/industries/chemicals.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "pharma",
+      "solution_name": "SAP S/4HANA for Life Sciences",
+      "solution_url": "https://www.sap.com/industries/life-sciences.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "telecom",
+      "solution_name": "SAP S/4HANA for Telecommunications",
+      "solution_url": "https://www.sap.com/industries/telecommunications.html",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "energy",
+      "solution_name": "SAP S/4HANA for Utilities & Energy",
+      "solution_url": "https://www.sap.com/industries/utilities.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "automotive",
+      "solution_name": "SAP S/4HANA Automotive",
+      "solution_url": "https://www.sap.com/industries/automotive.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "logistics",
+      "solution_name": "SAP Transportation Management",
+      "solution_url": "https://www.sap.com/products/scm/tm.html",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_public",
+      "industry_key": "distribution",
+      "solution_name": "SAP S/4HANA for Wholesale Distribution",
+      "solution_url": "https://www.sap.com/industries/wholesale-distribution.html",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "manufacturing_process",
+      "solution_name": "SAP S/4HANA for Process Manufacturing",
+      "solution_url": "https://www.sap.com/industries/manufacturing.html",
+      "is_native": true,
+      "score_bonus": 28
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "chemicals",
+      "solution_name": "SAP IS-Chemical",
+      "solution_url": "https://www.sap.com/industries/chemicals.html",
+      "is_native": true,
+      "score_bonus": 28
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "pharma",
+      "solution_name": "SAP S/4HANA for Life Sciences",
+      "solution_url": "https://www.sap.com/industries/life-sciences.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "banking",
+      "solution_name": "SAP S/4HANA for Financial Services",
+      "solution_url": "https://www.sap.com/industries/banking.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "automotive",
+      "solution_name": "SAP S/4HANA Automotive",
+      "solution_url": "https://www.sap.com/industries/automotive.html",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "sap_s4_private",
+      "industry_key": "healthcare",
+      "solution_name": "SAP S/4HANA Healthcare",
+      "solution_url": "https://www.sap.com/industries/healthcare.html",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "sap_b1",
+      "industry_key": "retail",
+      "solution_name": "SAP Business One for Retail",
+      "solution_url": "https://www.sap.com/products/erp/business-one.html",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "sap_b1",
+      "industry_key": "distribution",
+      "solution_name": "SAP Business One for Distribution",
+      "solution_url": "https://www.sap.com/products/erp/business-one.html",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "sap_b1",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "SAP Business One for Manufacturing",
+      "solution_url": "https://www.sap.com/products/erp/business-one.html",
+      "is_native": true,
+      "score_bonus": 16
+    },
+    {
+      "erp_id": "sap_b1",
+      "industry_key": "food_beverage",
+      "solution_name": "SAP Business One for Food & Beverage",
+      "solution_url": "https://www.sap.com/products/erp/business-one.html",
+      "is_native": false,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "sap_b1",
+      "industry_key": "construction",
+      "solution_name": "SAP Business One for Construction",
+      "solution_url": "https://www.sap.com/products/erp/business-one.html",
+      "is_native": false,
+      "score_bonus": 12
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "insurance",
+      "solution_name": "Oracle Fusion for Insurance",
+      "solution_url": "https://www.oracle.com/industries/financial-services/insurance/",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "telecom",
+      "solution_name": "Oracle Fusion for Communications",
+      "solution_url": "https://www.oracle.com/industries/communications/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "energy",
+      "solution_name": "Oracle Fusion for Utilities",
+      "solution_url": "https://www.oracle.com/industries/utilities/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "Oracle Fusion Manufacturing Cloud",
+      "solution_url": "https://www.oracle.com/scm/manufacturing/",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "retail",
+      "solution_name": "Oracle Retail / Fusion ERP",
+      "solution_url": "https://www.oracle.com/industries/retail/",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "oracle_fusion",
+      "industry_key": "construction",
+      "solution_name": "Oracle Fusion for Construction",
+      "solution_url": "https://www.oracle.com/industries/construction-engineering/",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "netsuite",
+      "industry_key": "retail",
+      "solution_name": "NetSuite for Retail",
+      "solution_url": "https://www.netsuite.com/portal/industries/retail.shtml",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "netsuite",
+      "industry_key": "distribution",
+      "solution_name": "NetSuite for Distribution",
+      "solution_url": "https://www.netsuite.com/portal/industries/wholesale-distribution.shtml",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "netsuite",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "NetSuite for Manufacturing",
+      "solution_url": "https://www.netsuite.com/portal/industries/manufacturing.shtml",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "netsuite",
+      "industry_key": "food_beverage",
+      "solution_name": "NetSuite for Food & Beverage",
+      "solution_url": "https://www.netsuite.com/portal/industries/food-beverage.shtml",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "netsuite",
+      "industry_key": "construction",
+      "solution_name": "NetSuite for Construction",
+      "solution_url": "https://www.netsuite.com/portal/industries/construction.shtml",
+      "is_native": true,
+      "score_bonus": 16
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "distribution",
+      "solution_name": "D365 Supply Chain Management",
+      "solution_url": "https://dynamics.microsoft.com/en-us/supply-chain-management/",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "banking",
+      "solution_name": "D365 Finance for Financial Services",
+      "solution_url": "https://dynamics.microsoft.com/en-us/finance/overview/",
+      "is_native": true,
+      "score_bonus": 16
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "construction",
+      "solution_name": "D365 for Construction & Real Estate",
+      "solution_url": "https://dynamics.microsoft.com/en-us/industries/",
+      "is_native": false,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "field_service",
+      "solution_name": "D365 Field Service",
+      "solution_url": "https://dynamics.microsoft.com/en-us/field-service/overview/",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "healthcare",
+      "solution_name": "D365 for Healthcare",
+      "solution_url": "https://dynamics.microsoft.com/en-us/industries/health/",
+      "is_native": false,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "dynamics",
+      "industry_key": "automotive",
+      "solution_name": "D365 for Automotive",
+      "solution_url": "https://dynamics.microsoft.com/en-us/industries/automotive/",
+      "is_native": false,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "pharma",
+      "solution_name": "Infor CloudSuite Pharma",
+      "solution_url": "https://www.infor.com/industries/life-sciences",
+      "is_native": true,
+      "score_bonus": 25
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "manufacturing_process",
+      "solution_name": "Infor CloudSuite Process Manufacturing",
+      "solution_url": "https://www.infor.com/industries/process-manufacturing",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "chemicals",
+      "solution_name": "Infor CloudSuite Chemicals",
+      "solution_url": "https://www.infor.com/industries/chemicals",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "energy",
+      "solution_name": "Infor CloudSuite Energy",
+      "solution_url": "https://www.infor.com/industries/energy",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "retail",
+      "solution_name": "Infor CloudSuite Retail",
+      "solution_url": "https://www.infor.com/industries/retail",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "infor",
+      "industry_key": "public_sector",
+      "solution_name": "Infor CloudSuite Public Sector",
+      "solution_url": "https://www.infor.com/industries/public-sector",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "ifs",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "IFS Cloud Manufacturing",
+      "solution_url": "https://www.ifs.com/industries/manufacturing/",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "ifs",
+      "industry_key": "logistics",
+      "solution_name": "IFS Cloud for Transportation & Logistics",
+      "solution_url": "https://www.ifs.com/industries/transportation-logistics/",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "ifs",
+      "industry_key": "construction",
+      "solution_name": "IFS Cloud for Construction",
+      "solution_url": "https://www.ifs.com/industries/construction/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "ifs",
+      "industry_key": "telecom",
+      "solution_name": "IFS Cloud for Telecommunications",
+      "solution_url": "https://www.ifs.com/industries/telecommunications/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "epicor",
+      "industry_key": "automotive",
+      "solution_name": "Epicor Kinetic for Automotive",
+      "solution_url": "https://www.epicor.com/en-us/industries/automotive/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "epicor",
+      "industry_key": "manufacturing_process",
+      "solution_name": "Epicor Kinetic Process Manufacturing",
+      "solution_url": "https://www.epicor.com/en-us/industries/process-manufacturing/",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "epicor",
+      "industry_key": "distribution",
+      "solution_name": "Epicor Kinetic for Distribution",
+      "solution_url": "https://www.epicor.com/en-us/industries/distribution/",
+      "is_native": true,
+      "score_bonus": 16
+    },
+    {
+      "erp_id": "acumatica",
+      "industry_key": "retail",
+      "solution_name": "Acumatica Commerce Edition",
+      "solution_url": "https://www.acumatica.com/acumatica-cloud-erp/commerce-edition/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "acumatica",
+      "industry_key": "distribution",
+      "solution_name": "Acumatica Distribution Edition",
+      "solution_url": "https://www.acumatica.com/acumatica-cloud-erp/distribution-edition/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "acumatica",
+      "industry_key": "construction",
+      "solution_name": "Acumatica Construction Edition",
+      "solution_url": "https://www.acumatica.com/acumatica-cloud-erp/construction-edition/",
+      "is_native": true,
+      "score_bonus": 22
+    },
+    {
+      "erp_id": "acumatica",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "Acumatica Manufacturing Edition",
+      "solution_url": "https://www.acumatica.com/acumatica-cloud-erp/manufacturing-edition/",
+      "is_native": true,
+      "score_bonus": 18
+    },
+    {
+      "erp_id": "acumatica",
+      "industry_key": "field_service",
+      "solution_name": "Acumatica Field Service Edition",
+      "solution_url": "https://www.acumatica.com/acumatica-cloud-erp/field-service-edition/",
+      "is_native": true,
+      "score_bonus": 20
+    },
+    {
+      "erp_id": "odoo",
+      "industry_key": "retail",
+      "solution_name": "Odoo Point of Sale & eCommerce",
+      "solution_url": "https://www.odoo.com/app/point-of-sale-shop",
+      "is_native": true,
+      "score_bonus": 16
+    },
+    {
+      "erp_id": "odoo",
+      "industry_key": "distribution",
+      "solution_name": "Odoo Inventory & Logistics",
+      "solution_url": "https://www.odoo.com/app/inventory",
+      "is_native": true,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "odoo",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "Odoo Manufacturing",
+      "solution_url": "https://www.odoo.com/app/manufacturing",
+      "is_native": true,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "odoo",
+      "industry_key": "construction",
+      "solution_name": "Odoo Project & Field Service",
+      "solution_url": "https://www.odoo.com/app/project",
+      "is_native": false,
+      "score_bonus": 10
+    },
+    {
+      "erp_id": "erpnext",
+      "industry_key": "distribution",
+      "solution_name": "ERPNext Distribution & Stock",
+      "solution_url": "https://erpnext.com/modules/stock",
+      "is_native": true,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "erpnext",
+      "industry_key": "retail",
+      "solution_name": "ERPNext POS & Retail",
+      "solution_url": "https://erpnext.com/modules/pos",
+      "is_native": true,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "erpnext",
+      "industry_key": "manufacturing_discrete",
+      "solution_name": "ERPNext Manufacturing",
+      "solution_url": "https://erpnext.com/modules/manufacturing",
+      "is_native": true,
+      "score_bonus": 14
+    },
+    {
+      "erp_id": "erpnext",
+      "industry_key": "healthcare",
+      "solution_name": "ERPNext Healthcare",
+      "solution_url": "https://erpnext.com/modules/healthcare",
+      "is_native": true,
+      "score_bonus": 14
     }
   ],
   "integrations": [

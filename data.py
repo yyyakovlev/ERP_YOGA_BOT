@@ -87,15 +87,198 @@ INDUSTRY_KEY_MAP: dict[str, str] = {
 # Маппинг integration_key для вопроса об интеграциях
 INTEGRATION_KEY_MAP: dict[str, str] = {
     "Государственные порталы и сервисы":                     "gov_portals",
-    "Системы BI и аналитики (Power BI, Tableau, Qlik)":      "bi_analytics",
-    "Профильные отраслевые системы (MES, WMS, TMS)":         "mes_wms_tms",
+    "BI и аналитика (Power BI, Tableau)":      "bi_analytics",
+    "MES / WMS / TMS":         "mes_wms_tms",
     "Банковские системы и эквайринг":                        "banking",
     "CRM-системы (Salesforce, HubSpot)":                     "crm",
     "Электронный документооборот (EDI, ЮЗЭДО)":              "edo",
-    "Маркетплейсы и e-commerce (Ozon, Wildberries, Shopify)":"ecommerce",
+    "Маркетплейсы и e-commerce":"ecommerce",
     "HR-системы (SAP SuccessFactors, 1С:ЗУП)":               "hr_systems",
-    "IoT и производственные системы (SCADA, OPC-UA)":        "iot_scada",
+    "IoT / SCADA / OPC-UA":        "iot_scada",
 }
+
+
+# ── База локализаций по странам ──────────────────────────────────────────────
+# Уровни: "native" — встроено, "certified" — через партнёра, "limited" — частично, None — нет
+LOCALIZATION: dict[str, dict[str, str]] = {
+    "sap_s4_public": {
+        "Россия": "native",
+        "Казахстан": "native",
+        "Беларусь": "certified",
+        "Украина": "certified",
+        "Узбекистан / Центральная Азия": "certified",
+        "ОАЭ / Ближний Восток": "native",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "native",
+    },
+    "sap_s4_private": {
+        "Россия": "native",
+        "Казахстан": "native",
+        "Беларусь": "certified",
+        "Украина": "certified",
+        "Узбекистан / Центральная Азия": "certified",
+        "ОАЭ / Ближний Восток": "native",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "native",
+    },
+    "sap_b1": {
+        "Россия": "native",
+        "Казахстан": "native",
+        "Беларусь": "certified",
+        "Украина": "certified",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "native",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "certified",
+    },
+    "oracle_fusion": {
+        "Россия": "limited",
+        "Казахстан": "limited",
+        "Беларусь": "limited",
+        "Украина": "limited",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "native",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "certified",
+    },
+    "netsuite": {
+        "Россия": "limited",
+        "Казахстан": "limited",
+        "Беларусь": "limited",
+        "Украина": "limited",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "certified",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "certified",
+    },
+    "dynamics": {
+        "Россия": "native",
+        "Казахстан": "native",
+        "Беларусь": "certified",
+        "Украина": "certified",
+        "Узбекистан / Центральная Азия": "certified",
+        "ОАЭ / Ближний Восток": "native",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "native",
+    },
+    "infor": {
+        "Россия": "limited",
+        "Казахстан": "limited",
+        "Беларусь": "limited",
+        "Украина": "limited",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "certified",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "certified",
+    },
+    "epicor": {
+        "Россия": "limited",
+        "Казахстан": "limited",
+        "Беларусь": "limited",
+        "Украина": "limited",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "limited",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "certified",
+        "Другая страна / Несколько регионов": "certified",
+    },
+    "acumatica": {
+        "Россия": "native",
+        "Казахстан": "certified",
+        "Беларусь": "certified",
+        "Украина": "certified",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "certified",
+        "Германия / DACH": "certified",
+        "США / Канада": "native",
+        "Великобритания": "certified",
+        "Другая страна ЕС": "certified",
+        "Другая страна / Несколько регионов": "certified",
+    },
+    "odoo": {
+        "Россия": "certified",
+        "Казахстан": "certified",
+        "Беларусь": "certified",
+        "Украина": "certified",
+        "Узбекистан / Центральная Азия": "certified",
+        "ОАЭ / Ближний Восток": "certified",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "certified",
+    },
+    "erpnext": {
+        "Россия": "limited",
+        "Казахстан": "limited",
+        "Беларусь": "limited",
+        "Украина": "limited",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "certified",
+        "Германия / DACH": "certified",
+        "США / Канада": "native",
+        "Великобритания": "certified",
+        "Другая страна ЕС": "certified",
+        "Другая страна / Несколько регионов": "limited",
+    },
+    "ifs": {
+        "Россия": "limited",
+        "Казахстан": "limited",
+        "Беларусь": "limited",
+        "Украина": "limited",
+        "Узбекистан / Центральная Азия": "limited",
+        "ОАЭ / Ближний Восток": "native",
+        "Германия / DACH": "native",
+        "США / Канада": "native",
+        "Великобритания": "native",
+        "Другая страна ЕС": "native",
+        "Другая страна / Несколько регионов": "certified",
+    },
+}
+
+LOCALIZATION_LABELS = {
+    "native":     "✅ Нативная локализация",
+    "certified":  "⚡ Через сертифицированного партнёра",
+    "limited":    "⚠️ Ограниченная локализация",
+    None:         "❌ Локализация отсутствует",
+}
+
+LOCALIZATION_SCORE = {
+    "native":    15,
+    "certified":  8,
+    "limited":   -10,
+    None:        -20,
+}
+
+
+def get_localization(erp_key: str, country: str) -> tuple[str | None, str]:
+    """Возвращает (уровень, текст-метка) для страны и ERP."""
+    level = LOCALIZATION.get(erp_key, {}).get(country)
+    label = LOCALIZATION_LABELS.get(level, "⚠️ Данные не найдены")
+    return level, label
 
 
 def _industry_key(industry_text: str) -> str:
@@ -109,6 +292,24 @@ def _industry_key(industry_text: str) -> str:
 # ── Вопросы анкеты ────────────────────────────────────────────────────────────
 
 STEPS = [
+    {
+        "id": "vendor_pref", "block": "main",
+        "q": "🏢 Хотите рассматривать решения конкретного вендора?",
+        "sub": "Можно выбрать несколько или оставить открытым подбор",
+        "type": "multi",
+        "opts": [
+            "Рассмотреть все — выбор открыт",
+            "SAP",
+            "Microsoft",
+            "Oracle",
+            "Infor",
+            "IFS",
+            "Epicor",
+            "Acumatica",
+            "Odoo",
+            "ERPNext / Frappe",
+        ],
+    },
     {
         "id": "industry", "block": "main",
         "q": "В какой отрасли работает компания?",
@@ -146,16 +347,31 @@ STEPS = [
         ],
     },
     {
+        "id": "users", "block": "main",
+        "q": "👥 Планируемое количество пользователей ERP",
+        "sub": "Напрямую влияет на стоимость лицензий",
+        "type": "single",
+        "opts": [
+            "До 10 пользователей",
+            "10–50 пользователей",
+            "50–200 пользователей",
+            "200–500 пользователей",
+            "500–1000 пользователей",
+            "Свыше 1000 пользователей",
+            "Не определено",
+        ],
+    },
+    {
         "id": "audit", "block": "main",
         "q": "Требования к прозрачности учёта",
         "sub": "Определяет круг допустимых систем",
         "type": "single",
         "opts": [
             "Нет особых требований",
-            "Ежегодный внешний аудит (Big4 / независимый)",
+            "Внешний аудит (Big4 / независимый)",
             "Подготовка к IPO или листингу на бирже",
             "Публичная компания — SOX / IFRS / МСФО",
-            "Регуляторные требования (банки, госсектор)",
+            "Регуляторные требования",
         ],
     },
     {
@@ -166,6 +382,25 @@ STEPS = [
             "Одна страна",
             "Несколько стран",
             "Глобально — мультинациональный",
+        ],
+    },
+    {
+        "id": "country", "block": "main",
+        "q": "🌐 Основная страна операций",
+        "sub": "Определяет локализацию и регуляторные требования",
+        "type": "single",
+        "opts": [
+            "Россия",
+            "Казахстан",
+            "Беларусь",
+            "Украина",
+            "Узбекистан / Центральная Азия",
+            "ОАЭ / Ближний Восток",
+            "Германия / DACH",
+            "США / Канада",
+            "Великобритания",
+            "Другая страна ЕС",
+            "Другая страна / Несколько регионов",
         ],
     },
     {
@@ -196,14 +431,14 @@ STEPS = [
         "opts": [
             "Нет требований к интеграции",
             "Государственные порталы и сервисы",
-            "Системы BI и аналитики (Power BI, Tableau, Qlik)",
-            "Профильные отраслевые системы (MES, WMS, TMS)",
+            "BI и аналитика (Power BI, Tableau)",
+            "MES / WMS / TMS",
             "Банковские системы и эквайринг",
             "CRM-системы (Salesforce, HubSpot)",
             "Электронный документооборот (EDI, ЮЗЭДО)",
-            "Маркетплейсы и e-commerce (Ozon, Wildberries, Shopify)",
+            "Маркетплейсы и e-commerce",
             "HR-системы (SAP SuccessFactors, 1С:ЗУП)",
-            "IoT и производственные системы (SCADA, OPC-UA)",
+            "IoT / SCADA / OPC-UA",
         ],
     },
     {
@@ -366,7 +601,7 @@ CONTACT_STEPS = [
 
 ERP_DB: dict[str, dict] = {
     "sap_s4_public":  {"name": "SAP S/4HANA Cloud, Public Edition",   "vendor": "SAP",       "deploy_types": ["cloud"],               "tco": "$$$$",  "url": "https://www.sap.com/products/erp/s4hana-cloud.html",         "community": "https://community.sap.com/t5/sap-s-4hana-cloud/ct-p/S4HANAcloud", "strengths": ["Стандарт mid-market → enterprise", "Быстрый старт 3–6 мес"], "weaknesses": ["Ограниченная кастомизация", "Выше цена vs альтернативы"], "industries": ["Нефть", "Производство", "Фарма", "Банки", "Дистрибуция", "Оптовая", "Энергет"]},
-    "sap_s4_private": {"name": "SAP S/4HANA Private / On-Premise",    "vendor": "SAP",       "deploy_types": ["onprem", "private"],   "tco": "$$$$$", "url": "https://www.sap.com/products/erp/s4hana-private-cloud.html",  "community": "https://community.sap.com/t5/sap-s-4hana/ct-p/S4HANA",           "strengths": ["Максимальная кастомизация", "Полный контроль данных"],        "weaknesses": ["Самый высокий TCO", "Внедрение 9–18 мес"],                  "industries": ["Нефть", "Горнодоб", "Аэрокосмос", "Государств", "Производство процессное"]},
+    "sap_s4_private": {"name": "SAP S/4HANA Private / On-Premise",    "vendor": "SAP",       "deploy_types": ["cloud", "onprem", "private"],   "tco": "$$$$$", "url": "https://www.sap.com/products/erp/s4hana-private-cloud.html",  "community": "https://community.sap.com/t5/sap-s-4hana/ct-p/S4HANA",           "strengths": ["Максимальная кастомизация", "Полный контроль данных"],        "weaknesses": ["Самый высокий TCO", "Внедрение 9–18 мес"],                  "industries": []},
     "sap_b1":         {"name": "SAP Business One",                     "vendor": "SAP",       "deploy_types": ["cloud", "onprem"],     "tco": "$$",    "url": "https://www.sap.com/products/erp/business-one.html",         "community": "https://community.sap.com/t5/sap-business-one/ct-p/businessone","strengths": ["Быстрый старт 1–3 мес", "Доступная цена"],                   "weaknesses": ["Только малый бизнес"],                                       "industries": ["Оптовая", "Дистрибуция", "Производство дискретное", "Ритейл"]},
     "oracle_fusion":  {"name": "Oracle Fusion Cloud ERP",              "vendor": "Oracle",    "deploy_types": ["cloud", "onprem"],     "tco": "$$$$$", "url": "https://www.oracle.com/erp/",                                "community": "https://community.oracle.com",                                     "strengths": ["Сильная финансовая функциональность", "AI встроен нативно"],  "weaknesses": ["Высокая стоимость", "Долгое внедрение"],                    "industries": ["Банки", "Страхование", "Государств", "Телеком", "Энергет"]},
     "netsuite":       {"name": "Oracle NetSuite",                      "vendor": "Oracle",    "deploy_types": ["cloud"],               "tco": "$$$",   "url": "https://www.netsuite.com",                                   "community": "https://community.netsuite.com",                                   "strengths": ["Нативный SaaS", "Мультивалюта / мультиентити"],               "weaknesses": ["Слабее для производства", "Кастомизация через SuiteScript"], "industries": ["Оптовая", "Дистрибуция", "Ритейл", "IT", "Стартапы"]},
@@ -510,7 +745,15 @@ def _score(erp_key: str, ans: dict) -> int:
     is_large = "1000" in size or "10 000" in size or "Свыше 10 000" in size
     if is_small and erp_key in ["sap_b1", "odoo", "erpnext", "acumatica", "netsuite"]:  s += 22
     if is_mid   and erp_key in ["netsuite", "dynamics", "acumatica", "sap_s4_public", "epicor", "infor"]: s += 22
-    if is_large and erp_key in ["sap_s4_public", "sap_s4_private", "oracle_fusion", "dynamics", "infor", "ifs"]: s += 22
+    if is_large and erp_key in ["sap_s4_public", "oracle_fusion", "dynamics", "infor", "ifs"]: s += 22
+    # sap_s4_private: крупная компания даёт бонус только при наличии инфраструктурного обоснования
+    if is_large and erp_key == "sap_s4_private":
+        dc = ans.get("datacenter", "")
+        dr = ans.get("deploy_reason", "")
+        if any(k in dc for k in ["ЦОД и IT", "построить", "Private Cloud", "гибридная"]):
+            s += 22
+        elif dr:  # есть причина On-Prem — умеренный бонус
+            s += 12
 
     # 4. Бюджет
     for b in budgets:
@@ -523,9 +766,19 @@ def _score(erp_key: str, ans: dict) -> int:
         if erp_key in ["sap_s4_private", "oracle_fusion", "dynamics", "infor"]: s += 22
     if "только облако" in dc:
         if erp_key in ["sap_s4_public", "netsuite", "dynamics", "acumatica", "odoo"]: s += 22
-        if erp_key == "sap_s4_private": s -= 20
+        if erp_key == "sap_s4_private": s -= 15  # без ЦОД предпочтительнее Public Edition
     if "гибридная" in dc:
         if erp_key in ["dynamics", "sap_s4_private", "epicor", "ifs"]: s += 15
+
+    # 5b. Причина On-Prem/Private — ключевые обоснования для SAP Private
+    deploy_reason = ans.get("deploy_reason", "")
+    if erp_key == "sap_s4_private" and deploy_reason:
+        if "кастомизация" in deploy_reason:   s += 20
+        if "суверенитет"  in deploy_reason:   s += 18
+        if "безопасност"  in deploy_reason:   s += 15
+        if "инфраструктур" in deploy_reason:  s += 12
+        if "политика"     in deploy_reason:   s += 15
+        if "интернет"     in deploy_reason:   s += 10
 
     # 6. Сроки
     if "До 3" in timeline   and erp_key in ["odoo", "sap_b1", "acumatica", "erpnext"]: s += 15
@@ -566,6 +819,30 @@ def _score(erp_key: str, ans: dict) -> int:
     if has_none    and erp_key in ["odoo", "erpnext"]:                        s -= 8
     if has_none    and erp_key in ["sap_s4_public", "netsuite", "dynamics", "acumatica"]: s += 8
 
+    # 13. Количество пользователей — влияет на TCO-модель
+    users = ans.get("users", "")
+    # Acumatica — безлимитные пользователи, выигрывает при большом числе
+    if "500–1000" in users or "Свыше 1000" in users:
+        if erp_key == "acumatica": s += 18   # per-resource, not per-user
+        if erp_key in ["sap_s4_public", "sap_s4_private", "oracle_fusion"]: s += 8  # масштаб в пользу enterprise
+        if erp_key in ["sap_b1", "odoo", "erpnext"]: s -= 10  # не для такого масштаба
+    if "200–500" in users:
+        if erp_key == "acumatica": s += 12
+        if erp_key in ["sap_s4_public", "dynamics", "netsuite"]: s += 8
+        if erp_key in ["sap_b1"]: s -= 8
+    if "50–200" in users:
+        if erp_key in ["dynamics", "netsuite", "acumatica", "sap_s4_public"]: s += 8
+        if erp_key == "sap_b1": s += 5
+    if "10–50" in users or "До 10" in users:
+        if erp_key in ["sap_b1", "odoo", "erpnext", "acumatica"]: s += 12
+        if erp_key in ["sap_s4_private", "oracle_fusion", "ifs"]: s -= 10  # избыточно для малого числа
+
+    # 14. Локализация по стране
+    country = ans.get("country", "")
+    if country:
+        loc_level, _ = get_localization(erp_key, country)
+        s += LOCALIZATION_SCORE.get(loc_level, 0)
+
     return s
 
 
@@ -574,7 +851,22 @@ def _score(erp_key: str, ans: dict) -> int:
 def get_top3(ans: dict) -> list[dict]:
     deploy_filter = _get_deploy_filter(ans)
     candidates    = [k for k in ERP_DB if _deploy_allowed(k, deploy_filter)]
-    scored        = sorted(candidates, key=lambda k: _score(k, ans), reverse=True)
+
+    # Фильтр по вендору если выбран конкретный
+    vendor_pref = ans.get("vendor_pref", [])
+    if isinstance(vendor_pref, str): vendor_pref = [vendor_pref]
+    selected_vendors = [v for v in vendor_pref if v != "Рассмотреть все — выбор открыт"]
+    if selected_vendors:
+        vendor_map = {
+            "SAP": "SAP", "Microsoft": "Microsoft", "Oracle": "Oracle",
+            "Infor": "Infor", "IFS": "IFS", "Epicor": "Epicor",
+            "Acumatica": "Acumatica", "Odoo": "Odoo", "ERPNext / Frappe": "Frappe",
+        }
+        allowed = {vendor_map[v] for v in selected_vendors if v in vendor_map}
+        if allowed:
+            candidates = [k for k in candidates if ERP_DB[k]["vendor"] in allowed]
+
+    scored = sorted(candidates, key=lambda k: _score(k, ans), reverse=True)
 
     result: list[str] = []
     used_vendors: set[str] = set()
@@ -646,7 +938,8 @@ def format_top3_text(top3: list[dict], ans: dict) -> str:
     need_ipo   = any(k in audit for k in ["IPO", "SOX", "Публичная", "Big4"])
 
     lines = [
-        f"*Деплой:* {filter_labels[deploy_filter]}  |  *Бюджет:* {budget_str}",
+        f"*Деплой:* {filter_labels[deploy_filter]}  |  *Бюджет:* {budget_str}"
+        + ("  |  *Польз.:* " + ans.get("users","") if ans.get("users") and ans.get("users") != "Не определено" else ""),
         "",
     ]
 
@@ -689,6 +982,17 @@ def format_top3_text(top3: list[dict], ans: dict) -> str:
         int_tags = _get_integration_tags(erp_key, integrations)
         if int_tags:
             entry.append("_Интеграции: " + " · ".join(int_tags) + "_")
+
+        # Локализация по стране
+        country = ans.get("country", "")
+        if country:
+            loc_level, loc_label = get_localization(erp_key, country)
+            if loc_level == "native":
+                entry.append(f"✅ Локализация для {country} — нативная")
+            elif loc_level == "certified":
+                entry.append(f"⚡ Локализация для {country} — через партнёра")
+            elif loc_level == "limited":
+                entry.append(f"⚠️ Локализация для {country} — ограниченная")
 
         entry += [f"🔗 [{erp['vendor']} / официальный сайт]({erp['url']})", ""]
         lines += entry

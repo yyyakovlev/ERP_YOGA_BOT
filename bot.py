@@ -180,8 +180,17 @@ async def cb_opt(cb: CallbackQuery, state: FSMContext) -> None:
     else:
         selected = answers.get(step["id"], [])
         if isinstance(selected, str): selected = [selected]
-        if full_val in selected: selected.remove(full_val)
-        else: selected.append(full_val)
+        if full_val in selected:
+            selected.remove(full_val)
+        else:
+            selected.append(full_val)
+        # Mutex: «Рассмотреть все» снимает остальных и наоборот
+        MUTEX_ALL = {"vendor_pref": "Рассмотреть все — выбор открыт"}
+        mutex_val = MUTEX_ALL.get(step["id"])
+        if mutex_val and full_val == mutex_val:
+            selected = [mutex_val]
+        elif mutex_val and mutex_val in selected and len(selected) > 1:
+            selected = [s for s in selected if s != mutex_val]
         answers[step["id"]] = selected
         await state.update_data(answers=answers)
         await _render_step(cb.message, state, edit=True)
